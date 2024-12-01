@@ -1,8 +1,10 @@
 import request from '@/utils/request'
 
 export function login(data) {
+  console.log('process.env.VUE_APP_BASE_API', process.env.VUE_APP_BASE_API)
+  console.log('process.env.ENV', process.env.ENV)
   return request({
-    url: '/vue-element-admin/user/login',
+    url: 'http://127.0.0.1:8080/api/user/login',
     method: 'post',
     data
   })
@@ -10,15 +12,15 @@ export function login(data) {
 
 export function getInfo(token) {
   return request({
-    url: '/vue-element-admin/user/info',
+    url: 'http://127.0.0.1:8080/api/user/info',
     method: 'get',
-    params: { token }
+    headers: { token }
   })
 }
 
 export function logout() {
   return request({
-    url: '/vue-element-admin/user/logout',
+    url: '/user/logout',
     method: 'post'
   })
 }

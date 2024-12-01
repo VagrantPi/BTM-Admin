@@ -3,11 +3,14 @@
     <el-form-item label="Name">
       <el-input v-model.trim="user.name" />
     </el-form-item>
-    <el-form-item label="Email">
-      <el-input v-model.trim="user.email" />
+    <el-form-item label="Role">
+      <el-input v-model.trim="user.role" disabled="true" />
+    </el-form-item>
+    <el-form-item label="Role">
+      <el-input v-model.trim="user.role" disabled="true" />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="submit">Update</el-button>
+      <el-button type="primary" disabled @click="submit">Update</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -20,13 +23,14 @@ export default {
       default: () => {
         return {
           name: '',
-          email: ''
+          role: ''
         }
       }
     }
   },
   methods: {
     submit() {
+      // TODO: update user profile
       this.$message({
         message: 'User information has been updated successfully',
         type: 'success',

@@ -103,6 +103,7 @@ export const asyncRoutes = [
   {
     path: '/permission',
     component: Layout,
+    hidden: true,
     redirect: '/permission/page',
     alwaysShow: true, // will always show the root menu
     name: 'Permission',
@@ -140,6 +141,34 @@ export const asyncRoutes = [
         }
       }
     ]
+  },
+
+  {
+    path: '/whitelist',
+    component: Layout,
+    meta: { roles: ['admin', 'editor'] },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/whitelist/index'),
+      name: 'WhiteList',
+      meta: {
+        title: 'WhiteList',
+        icon: 'education',
+        roles: ['admin', 'editor'],
+        noCache: true
+      }
+    },
+    {
+      path: '/whitelist/view',
+      component: () => import('@/views/whitelist/components/view'),
+      name: 'WhiteListView',
+      hidden: true,
+      meta: {
+        title: 'WhiteList View',
+        roles: ['admin', 'editor'],
+        noCache: true
+      }
+    }]
   },
 
   // 404 page must be placed at the end !!!
