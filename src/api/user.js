@@ -1,18 +1,18 @@
 import request from '@/utils/request'
 
 export function login(data) {
-  console.log('process.env.VUE_APP_BASE_API', process.env.VUE_APP_BASE_API)
-  console.log('process.env.ENV', process.env.ENV)
   return request({
-    url: 'http://127.0.0.1:8081/api/user/login',
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/login',
     method: 'post',
     data
   })
 }
 
 export function getInfo(token) {
+  console.log('process.env.VUE_APP_BACKEND_URL', process.env.VUE_APP_BACKEND_URL)
+
   return request({
-    url: 'http://127.0.0.1:8081/api/user/info',
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/info',
     method: 'get',
     headers: { token }
   })

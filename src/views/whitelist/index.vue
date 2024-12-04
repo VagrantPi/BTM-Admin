@@ -8,7 +8,6 @@
         placeholder="Phone"
         style="width: 200px;"
         class="filter-item"
-        disable
         @keyup.enter.native="handleFilter"
       />
       <el-button
@@ -16,7 +15,6 @@
         class="filter-item"
         type="primary"
         icon="el-icon-search"
-        disable
         @click="handleFilter"
       >
         Search
@@ -31,26 +29,22 @@
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
     >
       <el-table-column
         label="ID"
         prop="ID"
-        sortable="custom"
         align="center"
-        width="320"
-        :class-name="getSortClass('id')"
       >
         <template slot-scope="{row}">
           <span>{{ row.ID }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Phone" prop="Phone" width="200" align="center">
+      <el-table-column label="Phone" prop="Phone" align="center">
         <template slot-scope="{row}">
           <span>{{ row.Phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions(Add/Remove)" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="Actions(Add/Remove)" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
@@ -70,7 +64,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/customers'
+import { fetchList, searchList } from '@/api/customers'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -112,13 +106,9 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        limit: 10,
+        phone: ''
       },
-      importanceOptions: [1, 2, 3],
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
@@ -131,8 +121,7 @@ export default {
         type: [{ required: true, message: 'type is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-      },
-      downloadLoading: false
+      }
     }
   },
   created() {
@@ -152,13 +141,21 @@ export default {
       })
     },
     handleFilter() {
+      this.listQuery.phone = this.listQuery.phone.trim()
       this.listQuery.page = 1
-      this.getList()
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
+
+      if (this.listQuery.phone === '') {
+        this.getList()
+      } else {
+        searchList(this.listQuery).then(response => {
+          this.list = response.data.items
+          this.total = response.data.total
+
+          // Just to simulate the time of the request
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1.5 * 1000)
+        })
       }
     },
     sortByID(order) {
@@ -182,10 +179,6 @@ export default {
     },
     handleUpdate(row) {
       this.$router.push({ path: '/whitelist/view', query: { customerID: row.ID, phone: row.Phone }})
-    },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
 }

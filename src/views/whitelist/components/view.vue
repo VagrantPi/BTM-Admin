@@ -4,11 +4,10 @@
     <h1>Customer {{ phone }} Whitelist</h1>
     <div class="filter-container">
       <el-input
-        v-model="listQuery.phone"
-        placeholder="Phone"
+        v-model="listQuery.address"
+        placeholder="Address"
         style="width: 200px;"
         class="filter-item"
-        disabled
         @keyup.enter.native="handleFilter"
       />
       <el-button
@@ -16,7 +15,6 @@
         class="filter-item"
         type="primary"
         icon="el-icon-search"
-        disabled
         @click="handleFilter"
       >
         Search
@@ -39,15 +37,12 @@
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
     >
       <el-table-column
         label="ID"
         prop="ID"
-        sortable="custom"
         align="center"
         width="100"
-        :class-name="getSortClass('id')"
       >
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
@@ -58,7 +53,7 @@
           <span>{{ row.crypto_code }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Address" width="600" align="center">
+      <el-table-column label="Address" align="center">
         <template slot-scope="{row}">
           <span>{{ row.address }}</span>
         </template>
@@ -107,7 +102,7 @@
 </template>
 
 <script>
-import { fetchWhiteList, createWhiteList, deleteWhiteList } from '@/api/customers'
+import { fetchWhiteList, createWhiteList, deleteWhiteList, searchWhiteList } from '@/api/customers'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -150,11 +145,11 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
+        address: '',
         page: 1,
         limit: 20,
         customer_id: ''
       },
-      importanceOptions: [1, 2, 3],
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
@@ -174,8 +169,7 @@ export default {
       pvData: [],
       rules: {
         address: [{ required: true, message: 'address is required', trigger: 'blur' }]
-      },
-      downloadLoading: false
+      }
     }
   },
   created() {
@@ -199,9 +193,28 @@ export default {
       })
     },
     handleFilter() {
-      // TODO
+      this.listLoading = true
+
+      this.listQuery.customer_id = this.customer_id
       this.listQuery.page = 1
-      this.getList()
+
+      if (this.listQuery.address === '') {
+        this.getList()
+      } else {
+        searchWhiteList(this.listQuery)
+          .then(response => {
+            this.list = response.data.items
+            this.total = response.data.total
+
+            // Just to simulate the time of the request
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1.5 * 1000)
+          })
+          .catch(() => {
+            this.listLoading = false
+          })
+      }
     },
     resetTemp() {
       this.temp = {
@@ -266,10 +279,7 @@ export default {
           this.listLoading = false
         })
     },
-    updateData() {},
-    sortChange() {},
-    getSortClass: function(key) {
-    }
+    updateData() {}
   }
 }
 </script>

@@ -1,0 +1,1 @@
+scp -i ~/.ssh/lamassu_ed25519 -r ./dist/* root@152.42.242.249:/root/BTM-backend/dist
