@@ -83,7 +83,14 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
         <el-form-item label="Crypto" prop="crypto_code">
-          <el-input v-model="temp.crypto_code" disabled />
+          <el-select v-model="temp.crypto_code" placeholder="please select a crypto">
+            <el-option
+              v-for="item in coinList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="Address" prop="address">
           <el-input v-model="temp.address" />
@@ -103,6 +110,7 @@
 
 <script>
 import { fetchWhiteList, createWhiteList, deleteWhiteList, searchWhiteList } from '@/api/customers'
+import { getConfig } from '@/api/config'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -138,6 +146,7 @@ export default {
   },
   data() {
     return {
+      coinList: [],
       customer_id: '',
       phone: '',
       tableKey: 0,
@@ -156,7 +165,7 @@ export default {
       showReviewer: false,
       temp: {
         customer_id: '',
-        crypto_code: '',
+        crypto_code: 'BTC',
         address: ''
       },
       dialogFormVisible: false,
@@ -168,7 +177,8 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        address: [{ required: true, message: 'address is required', trigger: 'blur' }]
+        address: [{ required: true, message: 'address is required', trigger: 'blur' }],
+        crypto_code: [{ required: true, message: 'crypto is required', trigger: 'blur' }]
       }
     }
   },
@@ -178,19 +188,37 @@ export default {
     this.customer_id = query.customerID
     this.phone = query.phone
     this.getList()
+    this.fetchConfig()
   },
   methods: {
     getList() {
       this.listLoading = true
-      fetchWhiteList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
+      fetchWhiteList(this.listQuery)
+        .then(response => {
+          this.list = response.data.items
+          this.total = response.data.total
 
-        // Just to simulate the time of the request
-        setTimeout(() => {
+          // Just to simulate the time of the request
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1.5 * 1000)
+        })
+        .catch(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
-      })
+        })
+    },
+    fetchConfig() {
+      getConfig()
+        .then(response => {
+          if (response.data && response.data.config && response.data.config.locale_cryptoCurrencies) {
+            this.coinList = response.data.config.locale_cryptoCurrencies
+          } else {
+            console.error('Invalid response structure', response)
+          }
+        })
+        .catch((e) => {
+          console.error('Error fetching config:', e)
+        })
     },
     handleFilter() {
       this.listLoading = true
@@ -219,7 +247,7 @@ export default {
     resetTemp() {
       this.temp = {
         customer_id: this.customer_id,
-        crypto_code: 'ETH',
+        crypto_code: 'BTC',
         address: ''
       }
     },

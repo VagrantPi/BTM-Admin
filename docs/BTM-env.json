@@ -1,0 +1,17 @@
+{
+  "id": "z2m28betz3",
+  "v": 1,
+  "name": "BTM",
+  "variables": [
+    {
+      "key": "ip",
+      "value": "127.0.0.1:8080",
+      "secret": false
+    },
+    {
+      "key": "token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50IjoiYWRtaW4iLCJyYW5kb20iOjE3MzQyMzA5ODcxNTM3OTMsInJvbGUiOjF9.vvSsCkFoYvAlJDl53FKxVRiCmfCjGJBLi_7nATP4hDY",
+      "secret": false
+    }
+  ]
+}
