@@ -1,49 +1,55 @@
 import request from '@/utils/request'
 
-export function fetchList(query) {
+export function fetchList(query, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/customer/list',
     method: 'get',
-    params: query
+    params: query,
+    headers: { token }
   })
 }
 
-export function searchList(query) {
+export function searchList(query, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/customer/search',
     method: 'get',
-    params: query
+    params: query,
+    headers: { token }
   })
 }
 
-export function fetchWhiteList(query) {
+export function fetchWhiteList(query, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/customer/whitelist',
     method: 'get',
-    params: query
+    params: query,
+    headers: { token }
   })
 }
 
-export function createWhiteList(data) {
+export function createWhiteList(data, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/customer/whitelist',
     method: 'post',
-    data
+    data,
+    headers: { token }
   })
 }
 
-export function deleteWhiteList(id) {
+export function deleteWhiteList(id, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/customer/whitelist',
     method: 'delete',
-    data: { id }
+    data: { id },
+    headers: { token }
   })
 }
 
-export function searchWhiteList(query) {
+export function searchWhiteList(query, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/customer/whitelist/search',
     method: 'get',
-    params: query
+    params: query,
+    headers: { token }
   })
 }

@@ -1,8 +1,9 @@
 import request from '@/utils/request'
 
-export function getConfig() {
+export function getConfig(token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/config',
-    method: 'get'
+    method: 'get',
+    headers: { token }
   })
 }

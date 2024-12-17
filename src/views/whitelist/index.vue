@@ -130,7 +130,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
+      fetchList(this.listQuery, this.$store.getters.token).then(response => {
         this.list = response.data.items
         this.total = response.data.total
 
@@ -147,7 +147,7 @@ export default {
       if (this.listQuery.phone === '') {
         this.getList()
       } else {
-        searchList(this.listQuery).then(response => {
+        searchList(this.listQuery, this.$store.getters.token).then(response => {
           this.list = response.data.items
           this.total = response.data.total
 

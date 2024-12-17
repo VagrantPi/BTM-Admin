@@ -193,7 +193,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchWhiteList(this.listQuery)
+      fetchWhiteList(this.listQuery, this.$store.getters.token)
         .then(response => {
           this.list = response.data.items
           this.total = response.data.total
@@ -208,7 +208,7 @@ export default {
         })
     },
     fetchConfig() {
-      getConfig()
+      getConfig(this.$store.getters.token)
         .then(response => {
           if (response.data && response.data.config && response.data.config.locale_cryptoCurrencies) {
             this.coinList = response.data.config.locale_cryptoCurrencies
@@ -229,7 +229,7 @@ export default {
       if (this.listQuery.address === '') {
         this.getList()
       } else {
-        searchWhiteList(this.listQuery)
+        searchWhiteList(this.listQuery, this.$store.getters.token)
           .then(response => {
             this.list = response.data.items
             this.total = response.data.total
@@ -264,7 +264,7 @@ export default {
         if (valid) {
           this.listLoading = true
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          createWhiteList(this.temp)
+          createWhiteList(this.temp, this.$store.getters.token)
             .then(() => {
               this.dialogFormVisible = false
               this.$notify({
@@ -293,7 +293,7 @@ export default {
     handleDelete(row) {
       this.listLoading = true
 
-      deleteWhiteList(row.id)
+      deleteWhiteList(row.id, this.$store.getters.token)
         .then(() => {
           this.getList()
           this.$notify({

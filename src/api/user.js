@@ -18,9 +18,10 @@ export function getInfo(token) {
   })
 }
 
-export function logout() {
+export function logout(token) {
   return request({
-    url: '/user/logout',
-    method: 'post'
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/logout',
+    method: 'post',
+    headers: { token }
   })
 }
