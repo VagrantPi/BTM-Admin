@@ -1,26 +1,28 @@
 import request from '@/utils/request'
 
-export function getRoutes() {
+export function getRoutes(token) {
   return request({
-    url: '/routes',
-    method: 'get'
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/role/routes',
+    method: 'get',
+    headers: { token }
   })
 }
 
-export function getRoles() {
+export function getRoles(token) {
   return request({
-    url: '/roles',
-    method: 'get'
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/role/roles',
+    method: 'get',
+    headers: { token }
   })
 }
 
-export function addRole(data) {
-  return request({
-    url: '/role',
-    method: 'post',
-    data
-  })
-}
+// export function addRole(data) {
+//   return request({
+//     url: '/role',
+//     method: 'post',
+//     data
+//   })
+// }
 
 export function updateRole(id, data) {
   return request({
@@ -30,9 +32,9 @@ export function updateRole(id, data) {
   })
 }
 
-export function deleteRole(id) {
-  return request({
-    url: `/role/${id}`,
-    method: 'delete'
-  })
-}
+// export function deleteRole(id) {
+//   return request({
+//     url: `/role/${id}`,
+//     method: 'delete'
+//   })
+// }

@@ -1,7 +1,5 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="handleAddRole">New Role</el-button>
-
     <el-table :data="rolesList" style="width: 100%;margin-top:30px;" border>
       <el-table-column align="center" label="Role Key" width="220">
         <template slot-scope="scope">
@@ -21,7 +19,7 @@
       <el-table-column align="center" label="Operations">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">Edit</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(scope)">Delete</el-button>
+          <!-- <el-button type="danger" size="small" @click="handleDelete(scope)">Delete</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -62,7 +60,7 @@
 <script>
 import path from 'path'
 import { deepClone } from '@/utils'
-import { getRoutes, getRoles, addRole, deleteRole, updateRole } from '@/api/role'
+import { getRoutes, getRoles, updateRole } from '@/api/role'
 
 const defaultRole = {
   key: '',
@@ -98,13 +96,20 @@ export default {
   },
   methods: {
     async getRoutes() {
-      const res = await getRoutes()
-      this.serviceRoutes = res.data
-      this.routes = this.generateRoutes(res.data)
+      const res = await getRoutes(this.$store.getters.token)
+      this.serviceRoutes = JSON.parse(res.data)
+      this.routes = this.generateRoutes(this.serviceRoutes)
     },
     async getRoles() {
-      const res = await getRoles()
-      this.rolesList = res.data
+      const res = await getRoles(this.$store.getters.token)
+      this.rolesList = res.data.map(role => {
+        return {
+          key: role.role_name,
+          name: role.role_name,
+          description: role.role_desc,
+          routes: JSON.parse(role.role_raw)
+        }
+      })
     },
 
     // Reshape the routes structure so that it looks the same as the sidebar
@@ -148,14 +153,14 @@ export default {
       })
       return data
     },
-    handleAddRole() {
-      this.role = Object.assign({}, defaultRole)
-      if (this.$refs.tree) {
-        this.$refs.tree.setCheckedNodes([])
-      }
-      this.dialogType = 'new'
-      this.dialogVisible = true
-    },
+    // handleAddRole() {
+    //   this.role = Object.assign({}, defaultRole)
+    //   if (this.$refs.tree) {
+    //     this.$refs.tree.setCheckedNodes([])
+    //   }
+    //   this.dialogType = 'new'
+    //   this.dialogVisible = true
+    // },
     handleEdit(scope) {
       this.dialogType = 'edit'
       this.dialogVisible = true
@@ -168,22 +173,22 @@ export default {
         this.checkStrictly = false
       })
     },
-    handleDelete({ $index, row }) {
-      this.$confirm('Confirm to remove the role?', 'Warning', {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      })
-        .then(async() => {
-          await deleteRole(row.key)
-          this.rolesList.splice($index, 1)
-          this.$message({
-            type: 'success',
-            message: 'Delete succed!'
-          })
-        })
-        .catch(err => { console.error(err) })
-    },
+    // handleDelete({ $index, row }) {
+    //   this.$confirm('Confirm to remove the role?', 'Warning', {
+    //     confirmButtonText: 'Confirm',
+    //     cancelButtonText: 'Cancel',
+    //     type: 'warning'
+    //   })
+    //     .then(async() => {
+    //       await deleteRole(row.key)
+    //       this.rolesList.splice($index, 1)
+    //       this.$message({
+    //         type: 'success',
+    //         message: 'Delete succed!'
+    //       })
+    //     })
+    //     .catch(err => { console.error(err) })
+    // },
     generateTree(routes, basePath = '/', checkedKeys) {
       const res = []
 
@@ -215,11 +220,12 @@ export default {
             break
           }
         }
-      } else {
-        const { data } = await addRole(this.role)
-        this.role.key = data.key
-        this.rolesList.push(this.role)
       }
+      // else {
+      //   const { data } = await addRole(this.role)
+      //   this.role.key = data.key
+      //   this.rolesList.push(this.role)
+      // }
 
       const { description, key, name } = this.role
       this.dialogVisible = false
