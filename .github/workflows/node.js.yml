@@ -1,0 +1,45 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*" # 觸發條件為推送符合 v* 格式的標籤
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+
+    steps:
+      # 檢出程式碼
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 使用指定的 Node.js 版本
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "23.3.0"
+
+      # 安裝依賴
+      - name: Install dependencies
+        run: npm install
+
+      # 執行建置
+      - name: Build project
+        run: npm run build:develop
+
+      # 壓縮 dist 資料夾
+      - name: Zip dist folder
+        run: zip -r dist.zip dist
+
+      # 發佈壓縮檔到 GitHub Release
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: dist.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+          name: "Release ${{ github.ref_name }}"
+          body: |
+            Release generated for version ${{ github.ref_name }}.
