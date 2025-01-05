@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     tags:
-      - "v*" # 觸發條件為推送符合 v* 格式的標籤
+      - "**"
 
 jobs:
   build:
