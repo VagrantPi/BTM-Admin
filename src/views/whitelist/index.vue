@@ -4,8 +4,15 @@
     <h1>All Customers</h1>
     <div class="filter-container">
       <el-input
-        v-model="listQuery.phone"
-        placeholder="Phone"
+        v-model="listQuery.query"
+        placeholder="Query"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-input
+        v-model="listQuery.address"
+        placeholder="Address(必須完全相同)"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
@@ -64,7 +71,7 @@
 </template>
 
 <script>
-import { fetchList, searchList } from '@/api/customers'
+import { fetchList, searchList, searchListByAddress } from '@/api/customers'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -107,7 +114,8 @@ export default {
       listQuery: {
         page: 1,
         limit: 10,
-        phone: ''
+        query: '',
+        address: ''
       },
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -141,21 +149,33 @@ export default {
       })
     },
     handleFilter() {
-      this.listQuery.phone = this.listQuery.phone.trim()
+      this.listQuery.query = this.listQuery.query.trim()
       this.listQuery.page = 1
 
-      if (this.listQuery.phone === '') {
+      if (this.listQuery.query === '' && this.listQuery.address === '') {
         this.getList()
       } else {
-        searchList(this.listQuery, this.$store.getters.token).then(response => {
-          this.list = response.data.items
-          this.total = response.data.total
+        if (this.listQuery.address !== '') {
+          searchListByAddress(this.listQuery, this.$store.getters.token).then(response => {
+            this.list = response.data.items
+            this.total = response.data.total
 
-          // Just to simulate the time of the request
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1.5 * 1000)
-        })
+            // Just to simulate the time of the request
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1.5 * 1000)
+          })
+        } else {
+          searchList(this.listQuery, this.$store.getters.token).then(response => {
+            this.list = response.data.items
+            this.total = response.data.total
+
+            // Just to simulate the time of the request
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1.5 * 1000)
+          })
+        }
       }
     },
     sortByID(order) {
@@ -178,7 +198,7 @@ export default {
       }
     },
     handleUpdate(row) {
-      this.$router.push({ path: '/whitelist/view', query: { customerID: row.ID, phone: row.Phone }})
+      this.$router.push({ path: '/whitelist/view', query: { customerID: row.ID, query: row.Query }})
     }
   }
 }
