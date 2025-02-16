@@ -18,6 +18,15 @@ export function searchList(query, token) {
   })
 }
 
+export function searchListByAddress(query, token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/search/address/' + query.address,
+    method: 'get',
+    params: query,
+    headers: { token }
+  })
+}
+
 export function fetchWhiteList(query, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/customer/whitelist',
