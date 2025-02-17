@@ -52,7 +52,7 @@
       </el-table-column>
       <el-table-column label="CreatedAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.created }}</span>
+          <span>{{ utc8Time(row.created) }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -140,7 +140,6 @@ export default {
     this.customer_id = query.customerID
     this.phone = query.phone
     this.getList()
-    this.fetchConfig()
   },
   methods: {
     caculateCrypto: (amount, crypto) => {
@@ -167,6 +166,10 @@ export default {
         .catch(() => {
           this.listLoading = false
         })
+    },
+    utc8Time(t) {
+      const utcDate = new Date(t)
+      return utcDate.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
     }
   }
 }
