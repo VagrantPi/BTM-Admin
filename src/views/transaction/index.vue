@@ -70,10 +70,10 @@
           <span>{{ row.Phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions(Add/Remove)" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="Transactions" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
+          <el-button type="primary" size="mini" icon="el-icon-tickets" @click="showTxList(row)">
+            View
           </el-button>
         </template>
       </el-table-column>
@@ -226,8 +226,8 @@ export default {
         type: ''
       }
     },
-    handleUpdate(row) {
-      this.$router.push({ path: '/whitelist/view', query: { customerID: row.ID, phone: row.Phone }})
+    showTxList(row) {
+      this.$router.push({ path: '/transaction/view', query: { customerID: row.ID, phone: row.Phone }})
     }
   }
 }

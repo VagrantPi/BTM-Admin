@@ -152,6 +152,34 @@ export const asyncRoutes = [
     }]
   },
 
+  {
+    path: '/transaction',
+    component: Layout,
+    meta: { roles: ['admin', 'editor'] },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/transaction/index'),
+      name: 'Transaction',
+      meta: {
+        title: 'Transaction',
+        icon: 'el-icon-s-order',
+        roles: ['admin', 'editor'],
+        noCache: true
+      }
+    },
+    {
+      path: '/transaction/view',
+      component: () => import('@/views/transaction/components/view'),
+      name: 'TransactionView',
+      hidden: true,
+      meta: {
+        title: 'Transaction View',
+        roles: ['admin', 'editor'],
+        noCache: true
+      }
+    }]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
