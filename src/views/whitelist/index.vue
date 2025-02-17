@@ -1,5 +1,10 @@
-<template>
+<style>
+.filter-item {
+  margin-left: 5px;
+}
+</style>
 
+<template>
   <div class="app-container">
     <h1>All Customers</h1>
     <div class="filter-container">
@@ -25,6 +30,15 @@
         @click="handleFilter"
       >
         Search
+      </el-button>
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-refresh"
+        @click="handleClearFilter"
+      >
+        Clear
       </el-button>
     </div>
 
@@ -145,8 +159,18 @@ export default {
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 1 * 1000)
       })
+    },
+    handleClearFilter() {
+      this.listQuery.query = ''
+      this.listQuery.address = ''
+      this.getList()
+
+      // Just to simulate the time of the request
+      setTimeout(() => {
+        this.listLoading = false
+      }, 1 * 1000)
     },
     handleFilter() {
       this.listQuery.query = this.listQuery.query.trim()
@@ -163,7 +187,7 @@ export default {
             // Just to simulate the time of the request
             setTimeout(() => {
               this.listLoading = false
-            }, 1.5 * 1000)
+            }, 1 * 1000)
           })
         } else {
           searchList(this.listQuery, this.$store.getters.token).then(response => {
@@ -173,7 +197,7 @@ export default {
             // Just to simulate the time of the request
             setTimeout(() => {
               this.listLoading = false
-            }, 1.5 * 1000)
+            }, 1 * 1000)
           })
         }
       }
