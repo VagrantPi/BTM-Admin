@@ -307,7 +307,10 @@ export default {
           this.listLoading = false
         })
     },
-    updateData() {}
+    utc8Time(t) {
+      const utcDate = new Date(t)
+      return utcDate.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+    }
   }
 }
 </script>
