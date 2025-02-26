@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { fetchList, searchList, searchListByAddress } from '@/api/customers'
+import { fetchList, searchList, searchListByAddress, searchListByDateRange } from '@/api/customers'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -197,10 +197,20 @@ export default {
       this.listQuery.query = this.listQuery.query.trim()
       this.listQuery.page = 1
 
-      if (this.listQuery.query === '' && this.listQuery.address === '') {
+      if (this.listQuery.query === '' && this.listQuery.address === '' && this.listQuery.date_range === '') {
         this.getList()
       } else {
-        if (this.listQuery.address !== '') {
+        if (this.listQuery.date_range !== '') {
+          searchListByDateRange(this.listQuery, this.$store.getters.token).then(response => {
+            this.list = response.data.items
+            this.total = response.data.total
+
+            // Just to simulate the time of the request
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1 * 1000)
+          })
+        } else if (this.listQuery.address !== '') {
           searchListByAddress(this.listQuery, this.$store.getters.token).then(response => {
             this.list = response.data.items
             this.total = response.data.total

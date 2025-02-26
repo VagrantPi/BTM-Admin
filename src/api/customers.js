@@ -40,6 +40,19 @@ export function searchListByAddress(query, token) {
   })
 }
 
+export function searchListByDateRange(query, token) {
+  if (query.date_range) {
+    query.date_start = query.date_range[0]
+    query.date_end = query.date_range[1]
+  }
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/search/tx_created_at',
+    method: 'get',
+    params: query,
+    headers: { token }
+  })
+}
+
 export function fetchWhiteList(query, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/customer/whitelist',
