@@ -53,7 +53,7 @@
     >
       <el-table-column label="Created" width="350" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.Created }}</span>
+          <span>{{ utc8Time(row.Created) }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -228,6 +228,10 @@ export default {
     },
     showTxList(row) {
       this.$router.push({ path: '/transaction/view', query: { customerID: row.ID, phone: row.Phone }})
+    },
+    utc8Time(t) {
+      const utcDate = new Date(t)
+      return utcDate.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
     }
   }
 }
