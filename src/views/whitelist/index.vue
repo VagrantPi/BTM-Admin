@@ -7,20 +7,34 @@
 <template>
   <div class="app-container">
     <h1>All Customers</h1>
+    <el-alert
+      title="3 種搜尋條件只能擇一"
+      type="info"
+      show-icon
+    />
+    <br>
     <div class="filter-container">
       <el-input
         v-model="listQuery.query"
-        placeholder="ID/Phone"
+        placeholder="Customer ID/Phone"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
       <el-input
         v-model="listQuery.address"
-        placeholder="Address(必須完全相同)"
-        style="width: 200px;"
+        placeholder="Customers Address(必須完全相同)"
+        style="width: 280px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
+      />
+      <el-date-picker
+        v-model="listQuery.date_range"
+        type="datetimerange"
+        style="margin-left: 5px; padding-top: 7px; width: 400px;"
+        range-separator="至"
+        start-placeholder="白名單建立開始日期"
+        end-placeholder="白名單建立結束日期"
       />
       <el-button
         v-waves
@@ -51,11 +65,6 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="Created" width="350" align="center">
-        <template slot-scope="{row}">
-          <span>{{ utc8Time(row.Created) }}</span>
-        </template>
-      </el-table-column>
       <el-table-column
         label="ID"
         prop="ID"
@@ -68,6 +77,11 @@
       <el-table-column label="Phone" prop="Phone" align="center">
         <template slot-scope="{row}">
           <span>{{ row.Phone }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Created" width="350" align="center">
+        <template slot-scope="{row}">
+          <span>{{ utc8Time(row.Created) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Actions(Add/Remove)" align="center" class-name="small-padding fixed-width">
@@ -90,7 +104,7 @@
 </template>
 
 <script>
-import { fetchList, searchList, searchListByAddress } from '@/api/customers'
+import { fetchList, searchList, searchListByAddress, searchListByDate } from '@/api/customers'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -134,7 +148,8 @@ export default {
         page: 1,
         limit: 10,
         query: '',
-        address: ''
+        address: '',
+        date_range: ''
       },
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -170,9 +185,9 @@ export default {
     handleClearFilter() {
       this.listQuery.query = ''
       this.listQuery.address = ''
-      this.getList()
+      this.listQuery.date_range = ''
 
-      // Just to simulate the time of the request
+      this.getList()
       setTimeout(() => {
         this.listLoading = false
       }, 1 * 1000)
@@ -181,10 +196,20 @@ export default {
       this.listQuery.query = this.listQuery.query.trim()
       this.listQuery.page = 1
 
-      if (this.listQuery.query === '' && this.listQuery.address === '') {
+      if (this.listQuery.query === '' && this.listQuery.address === '' && this.listQuery.date_range === '') {
         this.getList()
       } else {
-        if (this.listQuery.address !== '') {
+        if (this.listQuery.date_range !== '') {
+          searchListByDate(this.listQuery, this.$store.getters.token).then(response => {
+            this.list = response.data.items
+            this.total = response.data.total
+
+            // Just to simulate the time of the request
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1 * 1000)
+          })
+        } else if (this.listQuery.address !== '') {
           searchListByAddress(this.listQuery, this.$store.getters.token).then(response => {
             this.list = response.data.items
             this.total = response.data.total

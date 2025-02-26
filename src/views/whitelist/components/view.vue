@@ -58,6 +58,11 @@
           <span>{{ row.address }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Created" width="350" align="center">
+        <template slot-scope="{row}">
+          <span>{{ utc8Time(row.created_at) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Remove" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button
