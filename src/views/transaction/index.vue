@@ -1,40 +1,23 @@
-<style>
-.filter-item {
-  margin-left: 5px;
-}
-</style>
-
 <template>
+
   <div class="app-container">
-    <h1>All Customers</h1>
-    <el-alert
-      title="3 種搜尋條件只能擇一"
-      type="info"
-      show-icon
-    />
-    <br>
+    <h1>Customer {{ phone }} Transactions</h1>
     <div class="filter-container">
       <el-input
-        v-model="listQuery.query"
-        placeholder="Customer ID/Phone"
+        v-model="listQuery.customer_id"
+        placeholder="Customer ID"
         style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      <el-input
-        v-model="listQuery.address"
-        placeholder="Customer Address(必須完全相同)"
-        style="width: 280px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
       <el-date-picker
         v-model="listQuery.date_range"
-        type="daterange"
+        type="datetimerange"
         style="margin-left: 5px; padding-top: 7px; width: 400px;"
         range-separator="至"
-        start-placeholder="白名單建立開始日期"
-        end-placeholder="白名單建立結束日期"
+        start-placeholder="交易開始日期"
+        end-placeholder="交易結束日期"
+        clearable
       />
       <el-button
         v-waves
@@ -55,7 +38,6 @@
         Clear
       </el-button>
     </div>
-
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -71,24 +53,47 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <span>{{ row.ID }}</span>
+          <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Phone" prop="Phone" align="center">
+      <el-table-column label="Customer ID" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.Phone }}</span>
+          <span>{{ row.customerId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Created" width="350" align="center">
+      <el-table-column label="Success" width="100" align="center">
         <template slot-scope="{row}">
-          <span>{{ utc8Time(row.Created) }}</span>
+          <span>{{ row.sendConfirmed }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Transactions" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="Cash" align="center">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" icon="el-icon-tickets" @click="showTxList(row)">
-            View
-          </el-button>
+          <span>{{ row.fiat }} {{ row.fiatCode }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Crypto" align="center">
+        <template slot-scope="{row}">
+          <span>{{ caculateCrypto(row.cryptoAtoms, row.cryptoCode) }} {{ row.cryptoCode }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Rate" align="center">
+        <template slot-scope="{row}">
+          <span>1 {{ row.cryptoCode }} = {{ Number.parseFloat((Number(row.fiat) - Number(row.cashInFee)) / caculateCrypto(row.cryptoAtoms, row.cryptoCode)).toFixed(2) }} {{ row.fiatCode }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="ToAddress" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.toAddress }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="TxHash" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.txHash }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="CreatedAt" align="center">
+        <template slot-scope="{row}">
+          <span>{{ utc8Time(row.created) }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -104,7 +109,7 @@
 </template>
 
 <script>
-import { fetchList, searchList, searchListByAddress, searchListByDateRange } from '@/api/customers'
+import { fetchTxList } from '@/api/tx'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -122,7 +127,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 }, {})
 
 export default {
-  name: 'ComplexTable',
+  name: 'WhitelistView',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -140,15 +145,16 @@ export default {
   },
   data() {
     return {
+      customer_id: '',
+      phone: '',
       tableKey: 0,
       list: null,
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
-        query: '',
-        address: '',
+        limit: 20,
+        customer_id: '',
         date_range: ''
       },
       calendarTypeOptions,
@@ -157,103 +163,67 @@ export default {
       showReviewer: false,
       dialogFormVisible: false,
       dialogStatus: '',
+      textMap: {
+        update: 'Edit',
+        create: 'Create'
+      },
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        address: [{ required: true, message: 'address is required', trigger: 'blur' }],
+        crypto_code: [{ required: true, message: 'crypto is required', trigger: 'blur' }]
       }
     }
   },
   created() {
+    const { query } = this.$route
+    this.listQuery.customer_id = query.customerID
+    this.customer_id = query.customerID
+    this.phone = query.phone
     this.getList()
   },
   methods: {
+    caculateCrypto: (amount, crypto) => {
+      switch (crypto) {
+        case 'BTC':
+          return amount / 10 ** 8
+        case 'ETH':
+          return amount / 10 ** 18
+      }
+      return amount
+    },
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery, this.$store.getters.token).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
+      fetchTxList(this.listQuery, this.$store.getters.token)
+        .then(response => {
+          this.list = response.data.items
+          this.total = response.data.total
 
-        // Just to simulate the time of the request
-        setTimeout(() => {
+          // Just to simulate the time of the request
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1 * 1000)
+        })
+        .catch(() => {
           this.listLoading = false
-        }, 1 * 1000)
-      })
+        })
     },
     handleClearFilter() {
-      this.listQuery.query = ''
-      this.listQuery.address = ''
+      this.listQuery.customer_id = ''
       this.listQuery.date_range = ''
-      this.getList()
 
-      // Just to simulate the time of the request
+      this.getList()
       setTimeout(() => {
         this.listLoading = false
       }, 1 * 1000)
     },
     handleFilter() {
-      this.listQuery.query = this.listQuery.query.trim()
       this.listQuery.page = 1
 
-      if (this.listQuery.query === '' && this.listQuery.address === '' && this.listQuery.date_range === '') {
-        this.getList()
-      } else {
-        if (this.listQuery.date_range !== '') {
-          searchListByDateRange(this.listQuery, this.$store.getters.token).then(response => {
-            this.list = response.data.items
-            this.total = response.data.total
-
-            // Just to simulate the time of the request
-            setTimeout(() => {
-              this.listLoading = false
-            }, 1 * 1000)
-          })
-        } else if (this.listQuery.address !== '') {
-          searchListByAddress(this.listQuery, this.$store.getters.token).then(response => {
-            this.list = response.data.items
-            this.total = response.data.total
-
-            // Just to simulate the time of the request
-            setTimeout(() => {
-              this.listLoading = false
-            }, 1 * 1000)
-          })
-        } else {
-          searchList(this.listQuery, this.$store.getters.token).then(response => {
-            this.list = response.data.items
-            this.total = response.data.total
-
-            // Just to simulate the time of the request
-            setTimeout(() => {
-              this.listLoading = false
-            }, 1 * 1000)
-          })
-        }
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
-    resetTemp() {
-      this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
-      }
-    },
-    showTxList(row) {
-      this.$router.push({ path: '/transaction/view', query: { customerID: row.ID, phone: row.Phone }})
+      this.getList()
+      setTimeout(() => {
+        this.listLoading = false
+      }, 1 * 1000)
     },
     utc8Time(t) {
       const utcDate = new Date(t)

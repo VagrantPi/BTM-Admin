@@ -35,6 +35,7 @@
         range-separator="至"
         start-placeholder="白名單建立開始日期"
         end-placeholder="白名單建立結束日期"
+        clearable
       />
       <el-button
         v-waves
@@ -71,17 +72,22 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <span>{{ row.ID }}</span>
+          <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Phone" prop="Phone" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.Phone }}</span>
+          <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Created" width="350" align="center">
+      <el-table-column label="Customers Created Time" width="350" align="center">
         <template slot-scope="{row}">
-          <span>{{ utc8Time(row.Created) }}</span>
+          <span>{{ utc8Time(row.created_at) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="First Bind Whitelist Time" width="350" align="center">
+        <template slot-scope="{row}">
+          <span>{{ utc8Time(row.first_white_list_created) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Actions(Add/Remove)" align="center" class-name="small-padding fixed-width">
@@ -252,9 +258,12 @@ export default {
       }
     },
     handleUpdate(row) {
-      this.$router.push({ path: '/whitelist/view', query: { customerID: row.ID, phone: row.Phone }})
+      this.$router.push({ path: '/whitelist/view', query: { customerID: row.id, phone: row.phone }})
     },
     utc8Time(t) {
+      if (t === '0001-01-01T00:00:00Z') {
+        return ''
+      }
       const utcDate = new Date(t)
       return utcDate.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
     }

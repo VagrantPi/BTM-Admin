@@ -166,17 +166,6 @@ export const asyncRoutes = [
         roles: ['admin', 'editor'],
         noCache: true
       }
-    },
-    {
-      path: '/transaction/view',
-      component: () => import('@/views/transaction/components/view'),
-      name: 'TransactionView',
-      hidden: true,
-      meta: {
-        title: 'Transaction View',
-        roles: ['admin', 'editor'],
-        noCache: true
-      }
     }]
   },
 
