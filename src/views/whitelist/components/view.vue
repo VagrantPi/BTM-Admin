@@ -269,6 +269,9 @@ export default {
         if (valid) {
           this.listLoading = true
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
+          if (this.temp.address) {
+            this.temp.address = this.temp.address.trim()
+          }
           createWhiteList(this.temp, this.$store.getters.token)
             .then(() => {
               this.dialogFormVisible = false
