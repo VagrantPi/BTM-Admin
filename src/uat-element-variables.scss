@@ -1,0 +1,28 @@
+/* 改变主题色变量 */
+$--color-primary: #48A6A7;
+
+.el-menu-item,
+.sidebar-container,
+.el-submenu__title {
+    background-color: #48A6A7 !important;
+}
+.el-submenu{
+    background-color: #9ACBD0 !important;
+}
+#app .sidebar-container .el-submenu .el-menu-item{
+    color: #48A6A7 !important;
+    background-color: #9ACBD0 !important;
+}
+.el-menu-item.is-active {
+    color: #48A6A7 !important;
+    background-color: #9ACBD0 !important;
+}
+.el-alert--info {
+    color: white !important;
+    background-color: #9ACBD0 !important;
+}
+
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+@import "~element-ui/packages/theme-chalk/src/index";

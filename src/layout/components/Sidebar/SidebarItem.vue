@@ -1,21 +1,27 @@
 <style>
-.kais-primary-1 {
+/* .el-button--primary{
   background-color: #48A6A7 !important;
 }
-/* .el-submenu{ */
-.kais-primary-2{
+.el-menu-item {
+  background-color: #48A6A7 !important;
+}
+.sidebar-container {
+  background-color: #48A6A7 !important;
+}
+.el-submenu__title{
+  background-color: #48A6A7 !important;
+}
+.el-submenu{
   background-color: #9ACBD0 !important;
 }
-/* #app .sidebar-container .el-submenu .el-menu-item{ */
-.kais-primary-3{
+#app .sidebar-container .el-submenu .el-menu-item{
   background-color: #9ACBD0 !important;
   color: #48A6A7 !important;
 }
-/* .el-menu-item.is-active { */
-.kais-primary-4{
+.el-menu-item.is-active {
   color: #48A6A7 !important;
   background-color: #9ACBD0 !important;
-}
+} */
 </style>
 <template>
   <div v-if="!item.hidden">
@@ -76,23 +82,33 @@ export default {
     return {}
   },
   mounted() {
-    console.log('process.env.VUE_APP_BACKEND_URL', process.env.VUE_APP_BACKEND_URL.includes('152'))
-    const domain = location.host
+    // const domain = location.host
+    // console.log('domain', domain)
+    // console.log('domain', domain.includes('localhost'))
 
-    if (domain.includes('152.42.242.249')) {
-      document.querySelectorAll('.el-button--primary').forEach((btn) => {
-        btn.classList.add('kais-primary-1')
-      })
-      document.querySelectorAll('.el-submenu').forEach((btn) => {
-        btn.classList.add('kais-primary-2')
-      })
-      document.querySelectorAll('#app .sidebar-container .el-submenu .el-menu-item').forEach((btn) => {
-        btn.classList.add('kais-primary-3')
-      })
-      document.querySelectorAll('.el-menu-item.is-active').forEach((btn) => {
-        btn.classList.add('kais-primary-4')
-      })
-    }
+    // if (domain.includes('127')) {
+    //   document.querySelectorAll('.el-button--primary').forEach((btn) => {
+    //     btn.classList.add('kais-primary-1')
+    //   })
+    //   document.querySelectorAll('.el-menu-item').forEach((btn) => {
+    //     btn.classList.add('kais-primary-1')
+    //   })
+    //   document.querySelectorAll('.sidebar-container').forEach((btn) => {
+    //     btn.classList.add('kais-primary-1')
+    //   })
+    //   document.querySelectorAll('.el-submenu__title').forEach((btn) => {
+    //     btn.classList.add('kais-primary-1')
+    //   })
+    //   document.querySelectorAll('.el-button--primary').forEach((btn) => {
+    //     btn.classList.add('kais-primary-5')
+    //   })
+    //   document.querySelectorAll('#app .sidebar-container .el-submenu .el-menu-item').forEach((btn) => {
+    //     btn.classList.add('kais-primary-6')
+    //   })
+    //   document.querySelectorAll('.el-menu-item.is-active').forEach((btn) => {
+    //     btn.classList.add('kais-primary-7')
+    //   })
+    // }
   },
   methods: {
     hasOneShowingChild(children = [], parent) {
