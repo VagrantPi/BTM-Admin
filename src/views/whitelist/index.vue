@@ -8,7 +8,7 @@
   <div class="app-container">
     <h1>All Customers</h1>
     <el-alert
-      title="3 種搜尋條件只能擇一"
+      title="4 種搜尋條件只能擇一"
       type="info"
       show-icon
     />
@@ -27,6 +27,15 @@
         style="width: 280px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
+      />
+      <el-date-picker
+        v-model="listQuery.customer_date_range"
+        type="datetimerange"
+        style="margin-left: 5px; padding-top: 7px; width: 400px;"
+        range-separator="至"
+        start-placeholder="客戶建立開始日期"
+        end-placeholder="客戶建立結束日期"
+        clearable
       />
       <el-date-picker
         v-model="listQuery.date_range"
@@ -110,7 +119,7 @@
 </template>
 
 <script>
-import { fetchList, searchList, searchListByAddress, searchListByDate } from '@/api/customers'
+import { fetchList, searchList, searchListByAddress, searchListByDate, searchListByCustomerDate } from '@/api/customers'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -155,7 +164,8 @@ export default {
         limit: 10,
         query: '',
         address: '',
-        date_range: ''
+        date_range: '',
+        customer_date_range: ''
       },
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -192,6 +202,7 @@ export default {
       this.listQuery.query = ''
       this.listQuery.address = ''
       this.listQuery.date_range = ''
+      this.listQuery.customer_date_range = ''
 
       this.getList()
       setTimeout(() => {
@@ -202,11 +213,21 @@ export default {
       this.listQuery.query = this.listQuery.query.trim()
       this.listQuery.page = 1
 
-      if (this.listQuery.query === '' && this.listQuery.address === '' && this.listQuery.date_range === '') {
+      if (this.listQuery.query === '' && this.listQuery.address === '' && this.listQuery.date_range === '' && this.listQuery.customer_date_range === '') {
         this.getList()
       } else {
         if (this.listQuery.date_range !== '') {
           searchListByDate(this.listQuery, this.$store.getters.token).then(response => {
+            this.list = response.data.items
+            this.total = response.data.total
+
+            // Just to simulate the time of the request
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1 * 1000)
+          })
+        } else if (this.listQuery.customer_date_range !== '') {
+          searchListByCustomerDate(this.listQuery, this.$store.getters.token).then(response => {
             this.list = response.data.items
             this.total = response.data.total
 

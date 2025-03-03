@@ -1,3 +1,22 @@
+<style>
+.kais-primary-1 {
+  background-color: #48A6A7 !important;
+}
+/* .el-submenu{ */
+.kais-primary-2{
+  background-color: #9ACBD0 !important;
+}
+/* #app .sidebar-container .el-submenu .el-menu-item{ */
+.kais-primary-3{
+  background-color: #9ACBD0 !important;
+  color: #48A6A7 !important;
+}
+/* .el-menu-item.is-active { */
+.kais-primary-4{
+  color: #48A6A7 !important;
+  background-color: #9ACBD0 !important;
+}
+</style>
 <template>
   <div v-if="!item.hidden">
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
@@ -55,6 +74,25 @@ export default {
     // TODO: refactor with render function
     this.onlyOneChild = null
     return {}
+  },
+  mounted() {
+    console.log('process.env.VUE_APP_BACKEND_URL', process.env.VUE_APP_BACKEND_URL.includes('152'))
+    const domain = location.host
+
+    if (domain.includes('152.42.242.249')) {
+      document.querySelectorAll('.el-button--primary').forEach((btn) => {
+        btn.classList.add('kais-primary-1')
+      })
+      document.querySelectorAll('.el-submenu').forEach((btn) => {
+        btn.classList.add('kais-primary-2')
+      })
+      document.querySelectorAll('#app .sidebar-container .el-submenu .el-menu-item').forEach((btn) => {
+        btn.classList.add('kais-primary-3')
+      })
+      document.querySelectorAll('.el-menu-item.is-active').forEach((btn) => {
+        btn.classList.add('kais-primary-4')
+      })
+    }
   },
   methods: {
     hasOneShowingChild(children = [], parent) {

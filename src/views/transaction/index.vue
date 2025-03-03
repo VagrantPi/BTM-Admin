@@ -10,6 +10,13 @@
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
+      <el-input
+        v-model="listQuery.phone"
+        placeholder="Phone"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
       <el-date-picker
         v-model="listQuery.date_range"
         type="datetimerange"
@@ -59,6 +66,11 @@
       <el-table-column label="Customer ID" align="center">
         <template slot-scope="{row}">
           <span>{{ row.customerId }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Phone" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Success" width="100" align="center">
@@ -155,7 +167,8 @@ export default {
         page: 1,
         limit: 20,
         customer_id: '',
-        date_range: ''
+        date_range: '',
+        phone: ''
       },
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -210,6 +223,7 @@ export default {
     },
     handleClearFilter() {
       this.listQuery.customer_id = ''
+      this.listQuery.phone = ''
       this.listQuery.date_range = ''
 
       this.getList()

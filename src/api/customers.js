@@ -31,6 +31,19 @@ export function searchListByDate(query, token) {
   })
 }
 
+export function searchListByCustomerDate(query, token) {
+  if (query.customer_date_range) {
+    query.customer_date_start = query.customer_date_range[0]
+    query.customer_date_end = query.customer_date_range[1]
+  }
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/search/customer_created_at',
+    method: 'get',
+    params: query,
+    headers: { token }
+  })
+}
+
 export function searchListByAddress(query, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/customer/search/address/' + query.address,
