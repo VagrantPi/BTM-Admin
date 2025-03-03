@@ -48,7 +48,7 @@
       style="width: 100%;"
     >
       <el-table-column
-        label="ID"
+        label="Session ID"
         prop="ID"
         align="center"
       >

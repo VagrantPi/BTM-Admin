@@ -67,7 +67,7 @@
       style="width: 100%;"
     >
       <el-table-column
-        label="ID"
+        label="Customer ID"
         prop="ID"
         align="center"
       >
