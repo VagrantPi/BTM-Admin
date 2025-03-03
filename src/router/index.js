@@ -131,9 +131,9 @@ export const asyncRoutes = [
     children: [{
       path: 'index',
       component: () => import('@/views/whitelist/index'),
-      name: 'WhiteList',
+      name: '白名單',
       meta: {
-        title: 'WhiteList',
+        title: '白名單',
         icon: 'education',
         roles: ['admin', 'editor'],
         noCache: true
@@ -142,10 +142,10 @@ export const asyncRoutes = [
     {
       path: '/whitelist/view',
       component: () => import('@/views/whitelist/components/view'),
-      name: 'WhiteListView',
+      name: '白名單編輯',
       hidden: true,
       meta: {
-        title: 'WhiteList View',
+        title: '白名單編輯',
         roles: ['admin', 'editor'],
         noCache: true
       }
@@ -159,10 +159,27 @@ export const asyncRoutes = [
     children: [{
       path: 'index',
       component: () => import('@/views/transaction/index'),
-      name: 'Transaction',
+      name: '交易記錄',
       meta: {
-        title: 'Transaction',
+        title: '交易記錄',
         icon: 'el-icon-s-order',
+        roles: ['admin', 'editor'],
+        noCache: true
+      }
+    }]
+  },
+
+  {
+    path: '/cibs',
+    component: Layout,
+    meta: { roles: ['admin', 'editor'] },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/cib/index'),
+      name: '告誡名單',
+      meta: {
+        title: '告誡名單',
+        icon: 'el-icon-warning',
         roles: ['admin', 'editor'],
         noCache: true
       }
