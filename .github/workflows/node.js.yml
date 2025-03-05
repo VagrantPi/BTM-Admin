@@ -6,8 +6,8 @@ on:
       - "**"
 
 jobs:
-  build:
-    name: Build and Release
+  build_prod:
+    name: Build Production
     runs-on: ubuntu-latest
 
     steps:
@@ -33,8 +33,32 @@ jobs:
       - name: Zip dist folder (production)
         run: zip -r dist-prd.zip dist
 
-      - name: rm old dist
-        run: rm -rf dist
+      # 將壓縮檔儲存為 Artifact
+      - name: Upload production artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-prd.zip
+          path: dist-prd.zip
+
+  build_dev:
+    name: Build Development
+    runs-on: ubuntu-latest
+    needs: build_prod  # 等待 build_prod job 完成
+
+    steps:
+      # 檢出程式碼
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 使用指定的 Node.js 版本
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "23.3.0"
+
+      # 安裝依賴
+      - name: Install dependencies
+        run: npm install
 
       # 執行開發環境建置
       - name: Build development project
@@ -43,6 +67,34 @@ jobs:
       # 壓縮開發環境 dist 資料夾
       - name: Zip dist folder (development)
         run: zip -r dist-uat.zip dist
+
+      # 將壓縮檔儲存為 Artifact
+      - name: Upload development artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-uat.zip
+          path: dist-uat.zip
+
+  release:
+    name: Release Artifacts
+    runs-on: ubuntu-latest
+    needs: [build_prod, build_dev]  # 等待 build_prod 和 build_dev job 完成
+
+    steps:
+      # 檢出程式碼
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 下載先前上傳的檔案
+      - name: Download production artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-prd.zip
+
+      - name: Download development artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-uat.zip
 
       # 發佈壓縮檔到 GitHub Release
       - name: Create GitHub Release
