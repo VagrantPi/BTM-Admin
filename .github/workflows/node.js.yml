@@ -27,7 +27,7 @@ jobs:
 
       # 執行建置
       - name: Build project
-        run: npm run build:develop
+        run: npm run build:prod
 
       # 壓縮 dist 資料夾
       - name: Zip dist folder

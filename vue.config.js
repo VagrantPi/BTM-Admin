@@ -24,7 +24,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/admin/',
+  publicPath: '/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -35,6 +35,13 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true
+    },
+    proxy: {
+      '/api': { // 可選，讓開發環境請求後端時不會有 CORS 問題
+        target: 'http://localhost:8080', // backend 服務的實際端口
+        changeOrigin: true,
+        pathRewrite: { '^/api': '' }
+      }
     },
     // before: require('./mock/mock-server.js')
   },
