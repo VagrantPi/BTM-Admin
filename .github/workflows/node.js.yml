@@ -33,6 +33,9 @@ jobs:
       - name: Zip dist folder (production)
         run: zip -r dist-prd.zip dist
 
+      - name: rm old dist
+        run: rm -rf dist
+
       # 執行開發環境建置
       - name: Build development project
         run: npm run build:develop
