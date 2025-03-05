@@ -25,19 +25,27 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 執行建置
-      - name: Build project
+      # 執行生產環境建置
+      - name: Build production project
         run: npm run build:prod
 
-      # 壓縮 dist 資料夾
-      - name: Zip dist folder
-        run: zip -r dist.zip dist
+      # 壓縮生產環境 dist 資料夾
+      - name: Zip dist folder (production)
+        run: zip -r dist-prd.zip dist
+
+      # 執行開發環境建置
+      - name: Build development project
+        run: npm run build:develop
+
+      # 壓縮開發環境 dist 資料夾
+      - name: Zip dist folder (development)
+        run: zip -r dist-uat.zip dist
 
       # 發佈壓縮檔到 GitHub Release
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: dist.zip
+          artifacts: dist-prd.zip, dist-uat.zip
           token: ${{ secrets.MY_TOKEN }}
           tag: ${{ github.ref_name }}
           name: "Release ${{ github.ref_name }}"
