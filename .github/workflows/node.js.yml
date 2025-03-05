@@ -6,7 +6,7 @@ on:
       - "**"
 
 jobs:
-  build:
+  build_pro:
     name: Build and Release
     runs-on: ubuntu-latest
 
@@ -31,13 +31,74 @@ jobs:
 
       # 壓縮 dist 資料夾
       - name: Zip dist folder
-        run: zip -r dist.zip dist
+        run: zip -r dist-prd.zip dist
+
+      # 將壓縮檔儲存為 Artifact
+      - name: Upload production artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-prd.zip
+          path: dist-prd.zip
+
+  build_dev:
+    name: Build Development
+    runs-on: ubuntu-latest
+
+    steps:
+      # 檢出程式碼
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 使用指定的 Node.js 版本
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "23.3.0"
+
+      # 安裝依賴
+      - name: Install dependencies
+        run: npm install
+
+      # 執行建置
+      - name: Build dependencies project
+        run: npm run build:develop
+
+      # 壓縮開發環境 dist 資料夾
+      - name: Zip dist folder (development)
+        run: zip -r dist-uat.zip dist
+
+      # 將壓縮檔儲存為 Artifact
+      - name: Upload development artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-uat.zip
+          path: dist-uat.zip
+
+  release:
+    name: Release Artifacts
+    runs-on: ubuntu-latest
+    needs: [build_prod, build_dev]
+    steps:
+      # 檢出程式碼
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 下載先前上傳的檔案
+      - name: Download production artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-prd.zip
+
+      - name: Download development artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-uat.zip
 
       # 發佈壓縮檔到 GitHub Release
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: dist.zip
+          artifacts: dist-prd.zip, dist-uat.zip
           token: ${{ secrets.MY_TOKEN }}
           tag: ${{ github.ref_name }}
           name: "Release ${{ github.ref_name }}"
