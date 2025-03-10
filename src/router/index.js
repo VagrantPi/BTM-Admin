@@ -125,15 +125,59 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/risk_control',
+    component: Layout,
+    redirect: '/risk_control/page',
+    alwaysShow: true, // will always show the root menu
+    name: '風控',
+    meta: {
+      title: '風控',
+      icon: 'list',
+      roles: ['admin'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'whitelist',
+        component: () => import('@/views/riskWhitelist/index'),
+        name: '風控白名單',
+        meta: {
+          title: '風控白名單',
+          icon: 'eye-open'
+        }
+      },
+      {
+        path: 'whitelist/view',
+        component: () => import('@/views/riskWhitelist/components/view'),
+        name: '風控白名單限額編輯',
+        hidden: true,
+        meta: {
+          title: '風控白名單限額編輯'
+        }
+      },
+      {
+        path: 'graylist',
+        component: () => import('@/views/riskWhitelist/index'),
+        name: '風控灰名單',
+        hidden: true,
+        meta: {
+          title: '風控灰名單',
+          icon: 'eye',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+
+  {
     path: '/whitelist',
     component: Layout,
     meta: { roles: ['admin', 'editor'] },
     children: [{
       path: 'index',
       component: () => import('@/views/whitelist/index'),
-      name: '白名單',
+      name: '綁定帳戶',
       meta: {
-        title: '白名單',
+        title: '綁定帳戶',
         icon: 'education',
         roles: ['admin', 'editor'],
         noCache: true
@@ -142,10 +186,10 @@ export const asyncRoutes = [
     {
       path: '/whitelist/view',
       component: () => import('@/views/whitelist/components/view'),
-      name: '白名單編輯',
+      name: '綁定帳戶編輯',
       hidden: true,
       meta: {
-        title: '白名單編輯',
+        title: '綁定帳戶編輯',
         roles: ['admin', 'editor'],
         noCache: true
       }

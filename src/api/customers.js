@@ -1,52 +1,22 @@
 import request from '@/utils/request'
 
 export function fetchList(query, token) {
-  return request({
-    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/list',
-    method: 'get',
-    params: query,
-    headers: { token }
-  })
-}
-
-export function searchList(query, token) {
-  return request({
-    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/search',
-    method: 'get',
-    params: query,
-    headers: { token }
-  })
-}
-
-export function searchListByDate(query, token) {
   if (query.date_range) {
-    query.date_start = query.date_range[0]
-    query.date_end = query.date_range[1]
+    query.white_list_date_start = query.date_range[0]
+    query.white_list_date_end = query.date_range[1]
+  } else {
+    query.white_list_date_start = undefined
+    query.white_list_date_end = undefined
   }
-  return request({
-    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/search/whitelist_created_at',
-    method: 'get',
-    params: query,
-    headers: { token }
-  })
-}
-
-export function searchListByCustomerDate(query, token) {
   if (query.customer_date_range) {
     query.customer_date_start = query.customer_date_range[0]
     query.customer_date_end = query.customer_date_range[1]
+  } else {
+    query.customer_date_start = undefined
+    query.customer_date_end = undefined
   }
   return request({
-    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/search/customer_created_at',
-    method: 'get',
-    params: query,
-    headers: { token }
-  })
-}
-
-export function searchListByAddress(query, token) {
-  return request({
-    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/search/address/' + query.address,
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/list',
     method: 'get',
     params: query,
     headers: { token }
