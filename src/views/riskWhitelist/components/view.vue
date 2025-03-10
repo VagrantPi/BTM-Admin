@@ -240,15 +240,19 @@ export default {
                 type: 'success',
                 message: '更新成功'
               })
-              this.getRoleList()
-              this.fetchRole()
-              this.getList()
+              this.$router.push({ path: '/risk_control/graylist', query: { customerID: this.customer_id }})
             })
             .catch(err => {
               if (err && err.msg && err.msg.includes('customer is black')) {
                 this.$message({
                   type: 'error',
                   message: '用戶已是黑名單，無法更新限額'
+                })
+              }
+              if (err && err.msg && err.msg.includes('no limit update')) {
+                this.$message({
+                  type: 'error',
+                  message: '限額數量跟舊的一致'
                 })
               }
             })
@@ -269,10 +273,6 @@ export default {
         callback: action => {
           updateRiskControlRole(this.customer_id, this.role, this.$store.getters.token)
             .then(response => {
-              this.$message({
-                type: 'success',
-                message: '更新成功>> 未實作，需轉跳到灰黑名單管理頁面'
-              })
               switch (this.role) {
                 case 2:
                   this.$router.push({ path: '/risk_control/graylist', query: { customerID: this.customer_id }})

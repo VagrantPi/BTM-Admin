@@ -19,7 +19,9 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
-if (process.env.VUE_APP_BACKEND_URL.includes('152.42.242.249')) {
+if (process.env.VUE_APP_BACKEND_URL.includes('128.199.90.129')) {
+  require('./prod-element-variables.scss')
+} else if (process.env.VUE_APP_BACKEND_URL.includes('152.42.242.249')) {
   require('./uat-element-variables.scss')
 } else {
   require('./styles/element-variables.scss')

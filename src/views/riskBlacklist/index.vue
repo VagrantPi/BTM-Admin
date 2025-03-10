@@ -11,6 +11,12 @@
       title="4 種搜尋條件只能擇一"
       type="info"
       show-icon
+      style="margin-bottom: 3px;"
+    />
+    <el-alert
+      title="目前黑名單原因有 3 種：後台角色權限調整、告誡名單、Lamassu 系統後台封鎖"
+      type="info"
+      show-icon
     />
     <br>
     <div class="filter-container">
@@ -97,6 +103,11 @@
       <el-table-column label="First Bind Whitelist Time" width="350" align="center">
         <template slot-scope="{row}">
           <span>{{ utc8Time(row.first_white_list_created) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="reason" align="center">
+        <template slot-scope="{row}">
+          <span>{{ reason(row.is_admin_block, row.is_cib_block, row.is_lamassu_block) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Limit" align="center" class-name="small-padding fixed-width">
@@ -254,6 +265,18 @@ export default {
       }
       const utcDate = new Date(t)
       return utcDate.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+    },
+    reason(is_admin_block, is_cib_block, is_lamassu_block) {
+      if (is_admin_block) {
+        return '後台角色權限調整'
+      }
+      if (is_cib_block) {
+        return '告誡名單'
+      }
+      if (is_lamassu_block) {
+        return 'Lamassu 系統後台封鎖'
+      }
+      return ''
     }
   }
 }
