@@ -156,13 +156,40 @@ export const asyncRoutes = [
       },
       {
         path: 'graylist',
-        component: () => import('@/views/riskWhitelist/index'),
+        component: () => import('@/views/riskGraylist/index'),
         name: '風控灰名單',
-        hidden: true,
         meta: {
           title: '風控灰名單',
           icon: 'eye',
           roles: ['admin']
+        }
+      },
+      {
+        path: 'graylist/view',
+        component: () => import('@/views/riskGraylist/components/view'),
+        name: '風控灰名單限額編輯',
+        hidden: true,
+        meta: {
+          title: '風控灰名單限額編輯'
+        }
+      },
+      {
+        path: 'blacklist',
+        component: () => import('@/views/riskBlacklist/index'),
+        name: '風控黑名單',
+        meta: {
+          title: '風控黑名單',
+          icon: 'password',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'blacklist/view',
+        component: () => import('@/views/riskBlacklist/components/view'),
+        name: '風控黑名單限額編輯',
+        hidden: true,
+        meta: {
+          title: '風控黑名單限額編輯'
         }
       }
     ]

@@ -6,7 +6,7 @@
 
 <template>
   <div class="app-container">
-    <h1>風控白名單</h1>
+    <h1>風控灰名單</h1>
     <el-alert
       title="4 種搜尋條件只能擇一"
       type="info"
@@ -166,7 +166,7 @@ export default {
         address: '',
         date_range: '',
         customer_date_range: '',
-        customer_type: 2
+        customer_type: 3
       },
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -246,7 +246,7 @@ export default {
       }
     },
     handleUpdate(row) {
-      this.$router.push({ path: '/risk_control/whitelist/view', query: { customerID: row.id, phone: row.phone }})
+      this.$router.push({ path: '/risk_control/graylist/view', query: { customerID: row.id, phone: row.phone }})
     },
     utc8Time(t) {
       if (t === '0001-01-01T00:00:00Z') {

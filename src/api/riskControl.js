@@ -36,5 +36,11 @@ export function updateRiskControlLimit(customer_id, daily_limit, monthly_limit, 
       daily_limit,
       monthly_limit
     }
+  }).catch(err => {
+    const { response } = err
+    if (response) {
+      return Promise.reject(response.data)
+    }
+    return Promise.reject(err)
   })
 }

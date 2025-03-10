@@ -9,7 +9,7 @@
 
 <template>
   <div class="app-container">
-    <h1>風控白名單 {{ phone }}</h1>
+    <h1>風控灰名單 {{ phone }}</h1>
     <br>
 
     <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
@@ -274,8 +274,8 @@ export default {
                 message: '更新成功>> 未實作，需轉跳到灰黑名單管理頁面'
               })
               switch (this.role) {
-                case 2:
-                  this.$router.push({ path: '/risk_control/graylist', query: { customerID: this.customer_id }})
+                case 1:
+                  this.$router.push({ path: '/risk_control/whitelist', query: { customerID: this.customer_id }})
                   break
                 case 3:
                   this.$router.push({ path: '/risk_control/blacklist', query: { customerID: this.customer_id }})

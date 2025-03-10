@@ -9,7 +9,7 @@
 
 <template>
   <div class="app-container">
-    <h1>風控白名單 {{ phone }}</h1>
+    <h1>風控黑名單 {{ phone }}</h1>
     <br>
 
     <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
@@ -34,13 +34,13 @@
       <el-tab-pane label="限額" name="limit">
         <el-form ref="form" :rules="rules" :model="form" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
           <el-form-item label="日限額" prop="daily_limit" :min="0">
-            <el-input v-model.number="form.daily_limit" />
+            <el-input v-model.number="form.daily_limit" disabled />
           </el-form-item>
           <el-form-item label="月限額" prop="monthly_limit" :min="0">
-            <el-input v-model.number="form.monthly_limit" />
+            <el-input v-model.number="form.monthly_limit" disabled />
           </el-form-item>
         </el-form>
-        <el-button type="warning" @click="updateLimit()">
+        <el-button type="warning" disabled @click="updateLimit()">
           Update
         </el-button>
       </el-tab-pane>
@@ -273,12 +273,13 @@ export default {
                 type: 'success',
                 message: '更新成功>> 未實作，需轉跳到灰黑名單管理頁面'
               })
+
               switch (this.role) {
                 case 2:
                   this.$router.push({ path: '/risk_control/graylist', query: { customerID: this.customer_id }})
                   break
-                case 3:
-                  this.$router.push({ path: '/risk_control/blacklist', query: { customerID: this.customer_id }})
+                case 1:
+                  this.$router.push({ path: '/risk_control/whitelist', query: { customerID: this.customer_id }})
                   break
               }
             })
