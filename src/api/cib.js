@@ -8,3 +8,7 @@ export function fetchCibList(query, token) {
     headers: { token }
   })
 }
+
+export function uploadCibUrl() {
+  return process.env.VUE_APP_BACKEND_URL + '/api/cib/upload'
+}

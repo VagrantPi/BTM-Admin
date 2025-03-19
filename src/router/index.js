@@ -243,7 +243,12 @@ export const asyncRoutes = [
   {
     path: '/cibs',
     component: Layout,
-    meta: { roles: ['admin', 'editor'] },
+    name: '告誡名單',
+    meta: {
+      title: '告誡名單',
+      icon: 'el-icon-warning',
+      roles: ['admin', 'editor']
+    },
     children: [{
       path: 'index',
       component: () => import('@/views/cib/index'),
@@ -251,6 +256,17 @@ export const asyncRoutes = [
       meta: {
         title: '告誡名單',
         icon: 'el-icon-warning',
+        roles: ['admin', 'editor'],
+        noCache: true
+      }
+    },
+    {
+      path: 'upload',
+      component: () => import('@/views/cib/upload'),
+      name: '上傳告誡名單',
+      meta: {
+        title: '上傳告誡名單',
+        icon: 'el-icon-upload',
         roles: ['admin', 'editor'],
         noCache: true
       }
