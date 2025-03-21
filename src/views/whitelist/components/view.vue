@@ -1,7 +1,7 @@
 <template>
 
   <div class="app-container">
-    <h1>Customer {{ phone }} Whitelist</h1>
+    <h1>地址綁定 {{ phone }}</h1>
     <div class="filter-container">
       <el-input
         v-model="listQuery.address"

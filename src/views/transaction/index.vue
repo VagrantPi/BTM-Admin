@@ -1,7 +1,7 @@
 <template>
 
   <div class="app-container">
-    <h1>Customer {{ phone }} Transactions</h1>
+    <h1>交易紀錄</h1>
     <div class="filter-container">
       <el-input
         v-model="listQuery.customer_id"
@@ -54,13 +54,34 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column
-        label="Session ID"
-        prop="ID"
-        align="center"
-      >
+      <el-table-column type="expand">
+        <template #default="props">
+          <div m="4">
+            <p m="t-0 b-2">Success: {{ props.row.sendConfirmed }}</p>
+          </div>
+          <div m="4">
+            <p m="t-0 b-2">Location: {{ props.row.deviceName }}</p>
+          </div>
+          <div m="4">
+            <p m="t-0 b-2">Cash: {{ props.row.fiat }} {{ props.row.fiatCode }}</p>
+          </div>
+          <div m="4">
+            <p m="t-0 b-2">Crypto: {{ caculateCrypto(props.row.cryptoAtoms, props.row.cryptoCode) }} {{ props.row.cryptoCode }}</p>
+          </div>
+          <div m="4">
+            <p m="t-0 b-2">Rate: 1 {{ props.row.cryptoCode }} = {{ Number.parseFloat((Number(props.row.fiat) - Number(props.row.cashInFee)) / caculateCrypto(props.row.cryptoAtoms, props.row.cryptoCode)).toFixed(2) }} {{ props.row.fiatCode }}</p>
+          </div>
+          <div m="4">
+            <p m="t-0 b-2">TxHash: {{ props.row.txHash }} </p>
+          </div>
+          <div m="4">
+            <p m="t-0 b-2">發票: {{ props.row.invoiceNo }}</p>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="Customer" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
+          <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Customer ID" align="center">
@@ -68,42 +89,7 @@
           <span>{{ row.customerId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Phone" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.phone }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Success" width="100" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.sendConfirmed }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Cash" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.fiat }} {{ row.fiatCode }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Crypto" align="center">
-        <template slot-scope="{row}">
-          <span>{{ caculateCrypto(row.cryptoAtoms, row.cryptoCode) }} {{ row.cryptoCode }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Rate" align="center">
-        <template slot-scope="{row}">
-          <span>1 {{ row.cryptoCode }} = {{ Number.parseFloat((Number(row.fiat) - Number(row.cashInFee)) / caculateCrypto(row.cryptoAtoms, row.cryptoCode)).toFixed(2) }} {{ row.fiatCode }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="ToAddress" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.toAddress }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="TxHash" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.txHash }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="CreatedAt" align="center">
+      <el-table-column label="Time" align="center">
         <template slot-scope="{row}">
           <span>{{ utc8Time(row.created) }}</span>
         </template>

@@ -2,6 +2,12 @@
 
   <div class="app-container">
     <h1>上傳告誡名單</h1>
+    <el-alert
+      title="格式僅接受 csv，請用 excel 另存成 csv，另外上傳如果發生錯誤可能為 BLANK_2 為非字串，請用 excel 處理好後再上傳"
+      type="info"
+      show-icon
+      style="margin-bottom: 3px;"
+    />
     <div class="filter-container">
       <el-upload
         ref="upload"

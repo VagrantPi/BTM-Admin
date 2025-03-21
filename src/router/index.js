@@ -123,6 +123,83 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/page',
+    alwaysShow: true, // will always show the root menu
+    name: 'User',
+    meta: {
+      title: '會員總覽',
+      icon: 'user',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'addresslist',
+        component: () => import('@/views/whitelist/index'),
+        name: '綁定地址',
+        meta: {
+          title: '綁定地址',
+          icon: 'education',
+          roles: ['admin', 'editor'],
+          noCache: true
+        }
+      },
+      {
+        path: '/addresslist/view',
+        component: () => import('@/views/whitelist/components/view'),
+        name: '綁定地址編輯',
+        hidden: true,
+        meta: {
+          title: '綁定地址編輯',
+          roles: ['admin', 'editor'],
+          noCache: true
+        }
+      },
+      {
+        path: '/transaction',
+        component: () => import('@/views/transaction/index'),
+        name: '交易記錄',
+        meta: {
+          title: '交易記錄',
+          icon: 'el-icon-s-order',
+          roles: ['admin', 'editor'],
+          noCache: true
+        }
+      }
+    ]
+  },
+  {
+    path: '/audit',
+    component: Layout,
+    redirect: '/audit/page',
+    alwaysShow: true, // will always show the root menu
+    name: '審核紀錄',
+    meta: {
+      title: '審核紀錄',
+      icon: 'list',
+      roles: ['admin', 'editor']
+    },
+    children: [
+    ],
+    hidden: true
+  },
+  {
+    path: '/tx',
+    component: Layout,
+    redirect: '/tx/page',
+    alwaysShow: true, // will always show the root menu
+    name: '交易監控',
+    meta: {
+      title: '交易監控',
+      icon: 'list',
+      roles: ['admin', 'editor']
+    },
+    children: [
+    ],
+    hidden: true
+  },
 
   {
     path: '/risk_control',
@@ -133,7 +210,7 @@ export const asyncRoutes = [
     meta: {
       title: '風控',
       icon: 'list',
-      roles: ['admin'] // you can set roles in root nav
+      roles: ['admin', 'editor']
     },
     children: [
       {
@@ -161,7 +238,7 @@ export const asyncRoutes = [
         meta: {
           title: '風控灰名單',
           icon: 'eye',
-          roles: ['admin']
+          roles: ['admin', 'editor']
         }
       },
       {
@@ -180,7 +257,7 @@ export const asyncRoutes = [
         meta: {
           title: '風控黑名單',
           icon: 'password',
-          roles: ['admin']
+          roles: ['admin', 'editor']
         }
       },
       {
@@ -193,51 +270,6 @@ export const asyncRoutes = [
         }
       }
     ]
-  },
-
-  {
-    path: '/whitelist',
-    component: Layout,
-    meta: { roles: ['admin', 'editor'] },
-    children: [{
-      path: 'index',
-      component: () => import('@/views/whitelist/index'),
-      name: '綁定帳戶',
-      meta: {
-        title: '綁定帳戶',
-        icon: 'education',
-        roles: ['admin', 'editor'],
-        noCache: true
-      }
-    },
-    {
-      path: '/whitelist/view',
-      component: () => import('@/views/whitelist/components/view'),
-      name: '綁定帳戶編輯',
-      hidden: true,
-      meta: {
-        title: '綁定帳戶編輯',
-        roles: ['admin', 'editor'],
-        noCache: true
-      }
-    }]
-  },
-
-  {
-    path: '/transaction',
-    component: Layout,
-    meta: { roles: ['admin', 'editor'] },
-    children: [{
-      path: 'index',
-      component: () => import('@/views/transaction/index'),
-      name: '交易記錄',
-      meta: {
-        title: '交易記錄',
-        icon: 'el-icon-s-order',
-        roles: ['admin', 'editor'],
-        noCache: true
-      }
-    }]
   },
 
   {

@@ -6,7 +6,7 @@
 
 <template>
   <div class="app-container">
-    <h1>All Customers</h1>
+    <h1>地址綁定</h1>
     <el-alert
       title="4 種搜尋條件只能擇一"
       type="info"
@@ -243,7 +243,7 @@ export default {
       }
     },
     handleUpdate(row) {
-      this.$router.push({ path: '/whitelist/view', query: { customerID: row.id, phone: row.phone }})
+      this.$router.push({ path: '/addresslist/view', query: { customerID: row.id, phone: row.phone }})
     },
     utc8Time(t) {
       if (t === '0001-01-01T00:00:00Z') {
