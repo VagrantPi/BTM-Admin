@@ -256,7 +256,7 @@ export const asyncRoutes = [
         name: '風控黑名單',
         meta: {
           title: '風控黑名單',
-          icon: 'password',
+          icon: 'el-icon-s-release',
           roles: ['admin', 'editor']
         }
       },
