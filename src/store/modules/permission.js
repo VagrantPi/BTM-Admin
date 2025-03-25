@@ -44,21 +44,27 @@ const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
     state.routes = constantRoutes.concat(routes)
+  },
+  SET_BACKEND_USED_ROUTES: (state, routes) => {
+    state.backendUsedRoutes = routes
   }
 }
 // eslint-disable-next-line no-unused-vars
 function removeComponentProperty(routes) {
-  return routes.map(route => {
-    const newRoute = { ...route }
-    delete newRoute.component
-    delete newRoute.alwaysShow
+  return routes
+    .filter(route => route.id !== '404')
+    .map(route => {
+      const newRoute = { ...route }
+      delete newRoute.component
+      delete newRoute.alwaysShow
+      delete newRoute.hidden
 
-    if (newRoute.children && Array.isArray(newRoute.children)) {
-      newRoute.children = removeComponentProperty(newRoute.children)
-    }
+      if (newRoute.children && Array.isArray(newRoute.children)) {
+        newRoute.children = removeComponentProperty(newRoute.children)
+      }
 
-    return newRoute
-  })
+      return newRoute
+    })
 }
 
 function updateTreeRoles(markTree, fullTree, role) {
@@ -128,6 +134,7 @@ const actions = {
           accessedRoutes = filterAsyncRoutes(roleAsncyRoutes, roles)
         }
         commit('SET_ROUTES', accessedRoutes)
+        commit('SET_BACKEND_USED_ROUTES', removeComponentProperty(asyncRoutes))
         resolve(accessedRoutes)
       })
     })

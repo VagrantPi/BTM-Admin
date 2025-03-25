@@ -1,6 +1,10 @@
 <template>
   <div class="app-container">
-
+    <h4>工程是使用 Debug 字串</h4>
+    <el-input v-model="backendUsedRoute" placeholder="Backend Used Routes" />
+    <br>
+    <br>
+    <br>
     <el-button type="primary" @click="handleAddRole">建立權限</el-button>
     <el-alert
       title="需要刪除權限請聯繫工程師"
@@ -8,7 +12,7 @@
       show-icon
       style="margin-top: 20px"
     />
-    <el-table :data="rolesList" style="width: 100%margin-top: 5px" border>
+    <el-table :data="rolesList" style="width: 100; margin-top: 5px" border>
       <el-table-column align="center" label="權限名稱" width="220">
         <template slot-scope="scope">
           {{ scope.row.name }}
@@ -77,6 +81,7 @@ const defaultRole = {
 export default {
   data() {
     return {
+      backendUsedRoute: '',
       role: Object.assign({}, defaultRole),
       routes: [],
       rolesList: [],
@@ -108,6 +113,8 @@ export default {
   created() {
     this.getRoutes()
     this.getRoles()
+    this.backendUsedRoute = JSON.stringify(this.$store.state.permission.backendUsedRoutes)
+    console.log('this.backendUsedRoute', this.backendUsedRoute)
   },
   methods: {
     addDisableProperty(routes, disableAll = false) {

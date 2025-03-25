@@ -144,38 +144,6 @@ export const asyncRoutes = [
       }
     ]
   },
-  {
-    id: 'auditBar',
-    path: '/audit',
-    component: Layout,
-    redirect: '/audit/page',
-    alwaysShow: true, // will always show the root menu
-    name: '審核紀錄',
-    meta: {
-      title: '審核紀錄',
-      icon: 'list',
-      roles: ['admin']
-    },
-    children: [
-    ],
-    hidden: true // TODO: 還未實作
-  },
-  {
-    id: 'txBar',
-    path: '/tx',
-    component: Layout,
-    redirect: '/tx/page',
-    alwaysShow: true, // will always show the root menu
-    name: '交易監控',
-    meta: {
-      title: '交易監控',
-      icon: 'list',
-      roles: ['admin']
-    },
-    children: [
-    ],
-    hidden: true // TODO: 還未實作
-  },
 
   {
     id: 'riskBar',
@@ -326,7 +294,7 @@ export const asyncRoutes = [
   },
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  { id: '404', path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({

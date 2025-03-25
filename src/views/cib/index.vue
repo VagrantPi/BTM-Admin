@@ -32,7 +32,7 @@
         v-waves
         class="filter-item"
         type="primary"
-        icon="el-icon-refresh"
+        icon="el-icon-upload"
         @click="handleUpload"
       >
         Upload
