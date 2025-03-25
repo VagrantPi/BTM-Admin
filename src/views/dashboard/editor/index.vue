@@ -3,7 +3,7 @@
     <div class=" clearfix">
       <div class="info-container">
         <h1>Welcome {{ name }}</h1>
-        <span style="font-size:20px;padding-top:20px;display:inline-block;">Editor's Dashboard</span>
+        <span style="font-size:20px;padding-top:20px;display:inline-block;">Dashboard</span>
       </div>
     </div>
   </div>

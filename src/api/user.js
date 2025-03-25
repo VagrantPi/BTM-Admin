@@ -23,3 +23,30 @@ export function logout(token) {
     headers: { token }
   })
 }
+
+export function userList(query, token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/list',
+    method: 'get',
+    params: query,
+    headers: { token }
+  })
+}
+
+export function userCreate(token, data) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/one',
+    method: 'post',
+    data,
+    headers: { token }
+  })
+}
+
+export function userUpdate(token, data) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/one',
+    method: 'put',
+    data,
+    headers: { token }
+  })
+}

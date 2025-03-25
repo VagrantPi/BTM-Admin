@@ -105,15 +105,24 @@ export const asyncRoutes = [
     path: '/permission',
     component: Layout,
     meta: {
-      roles: ['admin']
+      roles: ['admin'],
+      title: '後台管理',
+      icon: 'lock'
     },
     children: [
+      {
+        id: 'user',
+        path: 'user',
+        component: () => import('@/views/permission/user'),
+        name: '後台用戶管理',
+        meta: { title: '後台用戶管理', icon: 'user', roles: ['admin'] }
+      },
       {
         id: 'permission',
         path: 'index',
         component: () => import('@/views/permission/role'),
-        name: '權限設定',
-        meta: { title: '權限設定', icon: 'lock', roles: ['admin'] }
+        name: '權限管理',
+        meta: { title: '權限管理', icon: 'lock', roles: ['admin'] }
       }
     ]
   },

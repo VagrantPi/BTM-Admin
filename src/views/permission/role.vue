@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <h4>工程是使用 Debug 字串</h4>
+    <h1>權限管理</h1>
     <el-input v-model="backendUsedRoute" placeholder="Backend Used Routes" />
     <br>
     <br>
@@ -8,6 +8,7 @@
     <el-button type="primary" @click="handleAddRole">建立權限</el-button>
     <el-alert
       title="需要刪除權限請聯繫工程師"
+      description="admin 和 no_role 不得修改"
       type="info"
       show-icon
       style="margin-top: 20px"
@@ -35,9 +36,6 @@
         <el-form-item label="Name" prop="name">
           <el-input v-model="role.name" placeholder="Name" />
         </el-form-item>
-        <!-- <el-form-item v-if="dialogType === 'new'" label="Password" prop="password">
-          <el-input v-model="role.password" placeholder="Password 需要包含大小寫字母、數字和特殊字符" show-password />
-        </el-form-item> -->
         <el-form-item label="Desc" prop="description">
           <el-input
             v-model="role.description"
@@ -94,11 +92,6 @@ export default {
       },
       rules: {
         name: [{ required: true, message: 'name is required', trigger: 'blur' }],
-        // password: [
-        //   { required: true, message: 'password is required', trigger: 'blur' },
-        //   { min: 10, message: 'password must be at least 10 characters', trigger: 'blur' },
-        //   { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{10,}$/, message: 'password 需要包含大小寫字母、數字和特殊字符', trigger: 'blur' }
-        // ],
         description: [{ required: true, message: 'description is required', trigger: 'blur' }]
       },
       serviceRoutes: []
@@ -114,7 +107,6 @@ export default {
     this.getRoutes()
     this.getRoles()
     this.backendUsedRoute = JSON.stringify(this.$store.state.permission.backendUsedRoutes)
-    console.log('this.backendUsedRoute', this.backendUsedRoute)
   },
   methods: {
     addDisableProperty(routes, disableAll = false) {
@@ -246,14 +238,6 @@ export default {
             role_raw: JSON.stringify(this.role.routes)
           })
         } else {
-          // if (!this.role.password || !this.role.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{10,}$/)) {
-          //   this.$message({
-          //     message: 'password 為必填，且需要包含大小寫字母、數字和特殊字符',
-          //     type: 'error'
-          //   })
-          //   return
-          // }
-
           if (!this.role.name || !this.role.description) {
             this.$message({
               message: 'name 與 description 都是必填',

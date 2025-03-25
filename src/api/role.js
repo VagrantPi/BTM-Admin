@@ -8,10 +8,11 @@ export function getRoutes(token) {
   })
 }
 
-export function getRoles(token) {
+export function getRoles(token, query) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/user/role/roles',
     method: 'get',
+    params: query,
     headers: { token }
   })
 }
