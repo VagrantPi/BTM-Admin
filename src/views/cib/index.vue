@@ -28,6 +28,15 @@
       >
         Clear
       </el-button>
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-refresh"
+        @click="handleUpload"
+      >
+        Upload
+      </el-button>
     </div>
     <el-table
       :key="tableKey"
@@ -179,6 +188,11 @@ export default {
       setTimeout(() => {
         this.listLoading = false
       }, 1 * 1000)
+    },
+    handleUpload() {
+      this.$router.push({
+        path: '/review/cibs/upload'
+      })
     }
   }
 }

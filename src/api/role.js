@@ -16,19 +16,21 @@ export function getRoles(token) {
   })
 }
 
-// export function addRole(data) {
-//   return request({
-//     url: '/role',
-//     method: 'post',
-//     data
-//   })
-// }
-
-export function updateRole(id, data) {
+export function addRole(token, data) {
   return request({
-    url: `/role/${id}`,
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/role',
+    method: 'post',
+    data,
+    headers: { token }
+  })
+}
+
+export function updateRole(token, data) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/role',
     method: 'put',
-    data
+    data,
+    headers: { token }
   })
 }
 

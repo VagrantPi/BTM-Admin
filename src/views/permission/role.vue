@@ -1,12 +1,15 @@
 <template>
   <div class="app-container">
-    <el-table :data="rolesList" style="width: 100%;margin-top:30px;" border>
-      <el-table-column align="center" label="Role Key" width="220">
-        <template slot-scope="scope">
-          {{ scope.row.key }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Role Name" width="220">
+
+    <el-button type="primary" @click="handleAddRole">建立權限</el-button>
+    <el-alert
+      title="需要刪除權限請聯繫工程師"
+      type="info"
+      show-icon
+      style="margin-top: 20px"
+    />
+    <el-table :data="rolesList" style="width: 100%margin-top: 5px" border>
+      <el-table-column align="center" label="權限名稱" width="220">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
@@ -16,20 +19,22 @@
           {{ scope.row.description }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Operations">
+      <el-table-column align="center" label="Operations" width="220">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope)">Edit</el-button>
-          <!-- <el-button type="danger" size="small" @click="handleDelete(scope)">Delete</el-button> -->
+          <el-button type="primary" size="small" @click="handleEdit(scope)">編輯</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'Edit Role':'New Role'">
-      <el-form :model="role" label-width="80px" label-position="left">
-        <el-form-item label="Name">
-          <el-input v-model="role.name" placeholder="Role Name" />
+      <el-form :model="role" :rules="rules" label-width="100px" label-position="left">
+        <el-form-item label="Name" prop="name">
+          <el-input v-model="role.name" placeholder="Name" />
         </el-form-item>
-        <el-form-item label="Desc">
+        <!-- <el-form-item v-if="dialogType === 'new'" label="Password" prop="password">
+          <el-input v-model="role.password" placeholder="Password 需要包含大小寫字母、數字和特殊字符" show-password />
+        </el-form-item> -->
+        <el-form-item label="Desc" prop="description">
           <el-input
             v-model="role.description"
             :autosize="{ minRows: 2, maxRows: 4}"
@@ -49,7 +54,7 @@
           />
         </el-form-item>
       </el-form>
-      <div style="text-align:right;">
+      <div style="text-align:right">
         <el-button type="danger" @click="dialogVisible=false">Cancel</el-button>
         <el-button type="primary" @click="confirmRole">Confirm</el-button>
       </div>
@@ -60,7 +65,7 @@
 <script>
 import path from 'path'
 import { deepClone } from '@/utils'
-import { getRoutes, getRoles, updateRole } from '@/api/role'
+import { getRoutes, getRoles, updateRole, addRole } from '@/api/role'
 
 const defaultRole = {
   key: '',
@@ -81,20 +86,50 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'title'
-      }
+      },
+      rules: {
+        name: [{ required: true, message: 'name is required', trigger: 'blur' }],
+        // password: [
+        //   { required: true, message: 'password is required', trigger: 'blur' },
+        //   { min: 10, message: 'password must be at least 10 characters', trigger: 'blur' },
+        //   { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{10,}$/, message: 'password 需要包含大小寫字母、數字和特殊字符', trigger: 'blur' }
+        // ],
+        description: [{ required: true, message: 'description is required', trigger: 'blur' }]
+      },
+      serviceRoutes: []
     }
   },
   computed: {
     routesData() {
-      return this.routes
+      // 權限頁面不能由前端控制
+      return this.addDisableProperty(this.routes)
     }
   },
   created() {
-    // Mock: get all routes and roles list from server
     this.getRoutes()
     this.getRoles()
   },
   methods: {
+    addDisableProperty(routes, disableAll = false) {
+      return routes.map(route => {
+        let _disableAll = disableAll
+        const newRoute = { ...route }
+
+        if (newRoute.path === '/permission/index') {
+          _disableAll = true
+        }
+
+        if (_disableAll) {
+          newRoute.disabled = true
+        }
+
+        if (newRoute.children && Array.isArray(newRoute.children)) {
+          newRoute.children = this.addDisableProperty(newRoute.children, _disableAll)
+        }
+
+        return newRoute
+      })
+    },
     async getRoutes() {
       const res = await getRoutes(this.$store.getters.token)
       this.serviceRoutes = JSON.parse(res.data)
@@ -153,14 +188,14 @@ export default {
       })
       return data
     },
-    // handleAddRole() {
-    //   this.role = Object.assign({}, defaultRole)
-    //   if (this.$refs.tree) {
-    //     this.$refs.tree.setCheckedNodes([])
-    //   }
-    //   this.dialogType = 'new'
-    //   this.dialogVisible = true
-    // },
+    handleAddRole() {
+      this.role = Object.assign({}, defaultRole)
+      if (this.$refs.tree) {
+        this.$refs.tree.setCheckedNodes([])
+      }
+      this.dialogType = 'new'
+      this.dialogVisible = true
+    },
     handleEdit(scope) {
       this.dialogType = 'edit'
       this.dialogVisible = true
@@ -173,22 +208,6 @@ export default {
         this.checkStrictly = false
       })
     },
-    // handleDelete({ $index, row }) {
-    //   this.$confirm('Confirm to remove the role?', 'Warning', {
-    //     confirmButtonText: 'Confirm',
-    //     cancelButtonText: 'Cancel',
-    //     type: 'warning'
-    //   })
-    //     .then(async() => {
-    //       await deleteRole(row.key)
-    //       this.rolesList.splice($index, 1)
-    //       this.$message({
-    //         type: 'success',
-    //         message: 'Delete succed!'
-    //       })
-    //     })
-    //     .catch(err => { console.error(err) })
-    // },
     generateTree(routes, basePath = '/', checkedKeys) {
       const res = []
 
@@ -212,33 +231,52 @@ export default {
       const checkedKeys = this.$refs.tree.getCheckedKeys()
       this.role.routes = this.generateTree(deepClone(this.serviceRoutes), '/', checkedKeys)
 
-      if (isEdit) {
-        await updateRole(this.role.key, this.role)
-        for (let index = 0; index < this.rolesList.length; index++) {
-          if (this.rolesList[index].key === this.role.key) {
-            this.rolesList.splice(index, 1, Object.assign({}, this.role))
-            break
-          }
-        }
-      }
-      // else {
-      //   const { data } = await addRole(this.role)
-      //   this.role.key = data.key
-      //   this.rolesList.push(this.role)
-      // }
+      try {
+        if (isEdit) {
+          await updateRole(this.$store.getters.token, {
+            role_name: this.role.name,
+            role_desc: this.role.description,
+            role_raw: JSON.stringify(this.role.routes)
+          })
+        } else {
+          // if (!this.role.password || !this.role.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{10,}$/)) {
+          //   this.$message({
+          //     message: 'password 為必填，且需要包含大小寫字母、數字和特殊字符',
+          //     type: 'error'
+          //   })
+          //   return
+          // }
 
-      const { description, key, name } = this.role
-      this.dialogVisible = false
-      this.$notify({
-        title: 'Success',
-        dangerouslyUseHTMLString: true,
-        message: `
-            <div>Role Key: ${key}</div>
-            <div>Role Name: ${name}</div>
-            <div>Description: ${description}</div>
-          `,
-        type: 'success'
-      })
+          if (!this.role.name || !this.role.description) {
+            this.$message({
+              message: 'name 與 description 都是必填',
+              type: 'error'
+            })
+            return
+          }
+          await addRole(this.$store.getters.token, {
+            role_name: this.role.name,
+            role_desc: this.role.description,
+            role_raw: JSON.stringify(this.role.routes)
+          })
+        }
+        this.dialogVisible = false
+
+        this.$notify({
+          title: 'Success',
+          type: 'success'
+        })
+
+        this.getRoutes()
+        this.getRoles()
+      } catch (error) {
+        this.dialogVisible = false
+        this.$notify({
+          title: 'Error',
+          message: error.message,
+          type: 'error'
+        })
+      }
     },
     // reference: src/view/layout/components/Sidebar/SidebarItem.vue
     onlyOneShowingChild(children = [], parent) {
@@ -267,10 +305,10 @@ export default {
 <style lang="scss" scoped>
 .app-container {
   .roles-table {
-    margin-top: 30px;
+    margin-top: 30px
   }
   .permission-tree {
-    margin-bottom: 30px;
+    margin-bottom: 30px
   }
 }
 </style>

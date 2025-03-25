@@ -101,29 +101,24 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
+    id: 'permissionBar',
     path: '/permission',
     component: Layout,
-    redirect: '/permission/page',
-    alwaysShow: true, // will always show the root menu
-    name: 'Permission',
     meta: {
-      title: 'Permission',
-      icon: 'lock',
-      roles: ['admin'] // you can set roles in root nav
+      roles: ['admin']
     },
     children: [
       {
-        path: 'role',
+        id: 'permission',
+        path: 'index',
         component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
-        meta: {
-          title: 'Role Permission',
-          roles: ['admin']
-        }
+        name: '權限設定',
+        meta: { title: '權限設定', icon: 'lock', roles: ['admin'] }
       }
     ]
   },
   {
+    id: 'userBar',
     path: '/user',
     component: Layout,
     redirect: '/user/page',
@@ -132,45 +127,25 @@ export const asyncRoutes = [
     meta: {
       title: '會員總覽',
       icon: 'user',
-      roles: ['admin', 'editor']
+      roles: ['admin']
     },
     children: [
       {
-        path: 'addresslist',
-        component: () => import('@/views/whitelist/index'),
-        name: '綁定地址',
-        meta: {
-          title: '綁定地址',
-          icon: 'education',
-          roles: ['admin', 'editor'],
-          noCache: true
-        }
-      },
-      {
-        path: '/addresslist/view',
-        component: () => import('@/views/whitelist/components/view'),
-        name: '綁定地址編輯',
-        hidden: true,
-        meta: {
-          title: '綁定地址編輯',
-          roles: ['admin', 'editor'],
-          noCache: true
-        }
-      },
-      {
+        id: 'transaction',
         path: '/transaction',
         component: () => import('@/views/transaction/index'),
         name: '交易記錄',
         meta: {
           title: '交易記錄',
           icon: 'el-icon-s-order',
-          roles: ['admin', 'editor'],
+          roles: ['admin'],
           noCache: true
         }
       }
     ]
   },
   {
+    id: 'auditBar',
     path: '/audit',
     component: Layout,
     redirect: '/audit/page',
@@ -179,13 +154,14 @@ export const asyncRoutes = [
     meta: {
       title: '審核紀錄',
       icon: 'list',
-      roles: ['admin', 'editor']
+      roles: ['admin']
     },
     children: [
     ],
-    hidden: true
+    hidden: true // TODO: 還未實作
   },
   {
+    id: 'txBar',
     path: '/tx',
     component: Layout,
     redirect: '/tx/page',
@@ -194,14 +170,15 @@ export const asyncRoutes = [
     meta: {
       title: '交易監控',
       icon: 'list',
-      roles: ['admin', 'editor']
+      roles: ['admin']
     },
     children: [
     ],
-    hidden: true
+    hidden: true // TODO: 還未實作
   },
 
   {
+    id: 'riskBar',
     path: '/risk_control',
     component: Layout,
     redirect: '/risk_control/page',
@@ -209,100 +186,143 @@ export const asyncRoutes = [
     name: '風控',
     meta: {
       title: '風控',
-      icon: 'list',
-      roles: ['admin', 'editor']
+      icon: 'component',
+      roles: ['admin']
     },
     children: [
       {
+        id: 'whitelist',
         path: 'whitelist',
         component: () => import('@/views/riskWhitelist/index'),
         name: '風控白名單',
         meta: {
           title: '風控白名單',
-          icon: 'eye-open'
+          icon: 'eye-open',
+          roles: ['admin']
         }
       },
       {
+        id: 'whitelistView',
         path: 'whitelist/view',
         component: () => import('@/views/riskWhitelist/components/view'),
         name: '風控白名單限額編輯',
         hidden: true,
         meta: {
-          title: '風控白名單限額編輯'
+          title: '風控白名單限額編輯',
+          roles: ['admin']
         }
       },
       {
+        id: 'graylist',
         path: 'graylist',
         component: () => import('@/views/riskGraylist/index'),
         name: '風控灰名單',
         meta: {
           title: '風控灰名單',
           icon: 'eye',
-          roles: ['admin', 'editor']
+          roles: ['admin']
         }
       },
       {
+        id: 'graylistView',
         path: 'graylist/view',
         component: () => import('@/views/riskGraylist/components/view'),
         name: '風控灰名單限額編輯',
         hidden: true,
         meta: {
-          title: '風控灰名單限額編輯'
+          title: '風控灰名單限額編輯',
+          roles: ['admin']
         }
       },
       {
+        id: 'blacklist',
         path: 'blacklist',
         component: () => import('@/views/riskBlacklist/index'),
         name: '風控黑名單',
         meta: {
           title: '風控黑名單',
           icon: 'el-icon-s-release',
-          roles: ['admin', 'editor']
+          roles: ['admin']
         }
       },
       {
+        id: 'blacklistView',
         path: 'blacklist/view',
         component: () => import('@/views/riskBlacklist/components/view'),
         name: '風控黑名單限額編輯',
         hidden: true,
         meta: {
-          title: '風控黑名單限額編輯'
+          title: '風控黑名單限額編輯',
+          roles: ['admin']
         }
       }
     ]
   },
 
   {
-    path: '/cibs',
+    id: 'reviewBar',
+    path: '/review',
     component: Layout,
-    name: '告誡名單',
+    redirect: '/review/cibs', // TODO: 先指向告誡名單，之後改成審核紀錄
+    alwaysShow: true, // will always show the root menu
+    name: '審核作業',
     meta: {
-      title: '告誡名單',
-      icon: 'el-icon-warning',
-      roles: ['admin', 'editor']
+      title: '審核作業',
+      icon: 'list',
+      roles: ['admin']
     },
-    children: [{
-      path: 'index',
-      component: () => import('@/views/cib/index'),
-      name: '告誡名單',
-      meta: {
-        title: '告誡名單',
-        icon: 'el-icon-warning',
-        roles: ['admin', 'editor'],
-        noCache: true
+
+    children: [
+      {
+        id: 'cibs',
+        path: 'cibs',
+        component: () => import('@/views/cib/index'),
+        name: '告誡名單',
+        meta: {
+          title: '告誡名單',
+          icon: 'el-icon-warning',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
+      {
+        id: 'cibsUpload',
+        path: 'cibs/upload',
+        component: () => import('@/views/cib/upload'),
+        name: '上傳告誡名單',
+        hidden: true,
+        meta: {
+          title: '上傳告誡名單',
+          icon: 'el-icon-upload',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
+      {
+        id: 'addresslist',
+        path: 'addresslist',
+        component: () => import('@/views/whitelist/index'),
+        name: '綁定地址',
+        meta: {
+          title: '綁定地址',
+          icon: 'education',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
+      {
+        id: 'addresslistView',
+        path: '/addresslist/view',
+        component: () => import('@/views/whitelist/components/view'),
+        name: '綁定地址編輯',
+        hidden: true,
+        meta: {
+          title: '綁定地址編輯',
+          roles: ['admin'],
+          noCache: true
+        }
       }
-    },
-    {
-      path: 'upload',
-      component: () => import('@/views/cib/upload'),
-      name: '上傳告誡名單',
-      meta: {
-        title: '上傳告誡名單',
-        icon: 'el-icon-upload',
-        roles: ['admin', 'editor'],
-        noCache: true
-      }
-    }]
+    ]
   },
 
   // 404 page must be placed at the end !!!

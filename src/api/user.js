@@ -9,8 +9,6 @@ export function login(data) {
 }
 
 export function getInfo(token) {
-  console.log('process.env.VUE_APP_BACKEND_URL', process.env.VUE_APP_BACKEND_URL)
-
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/user/info',
     method: 'get',
