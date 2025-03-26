@@ -110,6 +110,7 @@ export default {
       },
       rolesList: [],
       user: {
+        account: '',
         password: '',
         role: 0
       }
@@ -172,10 +173,15 @@ export default {
           await userCreate(this.$store.getters.token, this.user)
         }
       } catch (error) {
+        console.log('error', error.response.data.msg)
+        let msg = error.message
+        if (!!error && !!error.response && !!error.response.data && !!error.response.data.msg) {
+          msg = error.response.data.msg
+        }
         this.dialogVisible = false
         this.$notify({
           title: 'Error',
-          message: error.message,
+          message: msg,
           type: 'error'
         })
         return
@@ -190,6 +196,9 @@ export default {
         title: 'Success',
         type: 'success'
       })
+      setTimeout(() => {
+        this.$router.go(0)
+      }, 500)
     },
     getList() {
       this.listLoading = true

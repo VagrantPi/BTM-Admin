@@ -1,6 +1,6 @@
 import axios from 'axios'
 // import { MessageBox, Message } from 'element-ui'
-import { Message } from 'element-ui'
+import { Message, Notification } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
@@ -74,7 +74,19 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    if (!!error.response && error.response.status === 401) {
+      Notification({
+        message: error.response.data.msg,
+        type: 'error',
+        duration: 5 * 1000
+      })
+      setTimeout(() => {
+        store.dispatch('user/resetToken').then(() => {
+          location.reload()
+        })
+      }, 1000)
+      return Promise.reject(error)
+    }
     Message({
       message: error.message,
       type: 'error',
