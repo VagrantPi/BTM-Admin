@@ -111,7 +111,7 @@ export const asyncRoutes = [
     },
     children: [
       {
-        id: 'user',
+        id: 'adminUsers',
         path: 'user',
         component: () => import('@/views/permission/user'),
         name: '後台用戶管理',
@@ -139,6 +139,18 @@ export const asyncRoutes = [
       roles: ['admin']
     },
     children: [
+      {
+        id: 'users',
+        path: 'users',
+        component: () => import('@/views/user/index'),
+        name: '會員總覽',
+        meta: {
+          title: '會員總覽',
+          icon: 'user',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
       {
         id: 'transaction',
         path: '/transaction',
