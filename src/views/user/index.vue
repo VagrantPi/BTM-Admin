@@ -252,7 +252,7 @@ export default {
       }
     },
     handleDetail(row) {
-      this.$router.push({ path: '/addresslist/view', query: { customerID: row.id, phone: row.phone }})
+      this.$router.push({ path: '/user/info', query: { customerID: row.id, phone: row.phone }})
     },
     utc8Time(t) {
       if (t === '0001-01-01T00:00:00Z') {

@@ -1,323 +1,142 @@
+<style>
+.label {
+  margin-bottom: 10px;
+}
+.block {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+</style>
+
 <template>
 
   <div class="app-container">
-    <h1>地址綁定 {{ phone }}</h1>
-    <div class="filter-container">
-      <el-input
-        v-model="listQuery.address"
-        placeholder="Address"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >
-        Search
-      </el-button>
-      <el-button
-        class="filter-item"
-        type="primary"
-        icon="el-icon-plus"
-        @click="handleCreate"
-      >
-        Add
-      </el-button>
-    </div>
+    <h1>基本資料</h1>
+    <el-row>
+      <el-col :span="16">
+        <div class="label">姓名：{{ info.name }}</div>
+        <div class="label">身分證號：{{ info.id_number }}</div>
+        <div class="label">出身年月日：{{ info.birthday }}</div>
+        <div class="label">地址：{{ info.address }}</div>
+        <div class="label">職業：{{ info.occupation }}</div>
+        <div class="label">手機：{{ info.phone_number }}</div>
+        <div class="label">Email：{{ info.email }}</div>
+      </el-col>
+      <el-col :span="8">
+        <div class="block">
+          <span class="demonstration">自拍照</span>
+          <el-image
+            :src="urls.selfie_img"
+            fit="cover"
+          />
+        </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <div class="block">
+          <span class="demonstration">身分證正面</span>
+          <el-image
+            :src="urls.id_card_front_img"
+            fit="cover"
+          />
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <div class="block">
+          <span class="demonstration">身分證反面</span>
+          <el-image
+            :src="urls.id_card_back_img"
+            fit="cover"
+          />
+        </div>
+      </el-col>
+    </el-row>
 
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-    >
-      <el-table-column
-        label="ID"
-        prop="ID"
-        align="center"
-        width="100"
-      >
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Crypto" width="150" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.crypto_code }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Address" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.address }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Created" width="350" align="center">
-        <template slot-scope="{row}">
-          <span>{{ utc8Time(row.created_at) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Remove" align="center" width="200" class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-button
-            type="danger"
-            icon="el-icon-minus"
-            size="mini"
-            @click="handleDelete(row)"
-          >
-            Remove
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <br>
+    <br>
+    <br>
 
-    <pagination
-      v-show="total > 0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="getList"
-    />
-
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Crypto" prop="crypto_code">
-          <el-select v-model="temp.crypto_code" placeholder="please select a crypto">
-            <el-option
-              v-for="item in coinList"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Address" prop="address">
-          <el-input v-model="temp.address" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          Cancel
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
-        </el-button>
-      </div>
-    </el-dialog>
+    <el-tabs type="border-card">
+      <el-tab-pane label="交易紀錄">
+        <TxsTable
+          :is-detail="true"
+        />
+      </el-tab-pane>
+      <el-tab-pane label="綁定地址">
+        <AddressWhiteList />
+      </el-tab-pane>
+      <el-tab-pane label="審核紀錄">
+        <ReviewHistory
+          v-if="info && info.applicant_id"
+          :applicant-id="info.applicant_id"
+        />
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <script>
-import { fetchWhiteList, createWhiteList, deleteWhiteList, searchWhiteList } from '@/api/customers'
-import { getConfig } from '@/api/config'
+import { getCustomerDetail, getSumsubImage } from '@/api/customers'
 import waves from '@/directive/waves' // waves directive
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
+import TxsTable from '@/components/Users/txs/index.vue'
+import AddressWhiteList from '@/components/Users/addressWhiteList/index.vue'
+import ReviewHistory from '@/components/Users/reviewHistory/index.vue'
 
 export default {
   name: 'WhitelistView',
-  components: { Pagination },
+  components: { TxsTable, AddressWhiteList, ReviewHistory },
   directives: { waves },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type]
-    }
-  },
   data() {
     return {
-      coinList: [],
-      customer_id: '',
-      phone: '',
-      tableKey: 0,
-      list: null,
-      total: 0,
-      listLoading: true,
-      listQuery: {
+      info: {
+        applicant_id: '',
+        name: '',
+        id_number: '',
+        birthday: '',
         address: '',
-        page: 1,
-        limit: 20,
-        customer_id: ''
+        occupation: '',
+        phone_number: '',
+        email: '',
+        inspection_id: '',
+        id_card_front_img_id: '',
+        id_card_back_img_id: '',
+        selfie_img_ids: []
       },
-      calendarTypeOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
-      temp: {
-        customer_id: '',
-        crypto_code: 'BTC',
-        address: ''
+      urls: {
+        id_card_front_img: '',
+        id_card_back_img: '',
+        selfie_img: ''
       },
-      dialogFormVisible: false,
-      dialogStatus: '',
-      textMap: {
-        update: 'Edit',
-        create: 'Create'
-      },
-      dialogPvVisible: false,
-      pvData: [],
-      rules: {
-        address: [{ required: true, message: 'address is required', trigger: 'blur' }],
-        crypto_code: [{ required: true, message: 'crypto is required', trigger: 'blur' }]
-      }
+      customer_id: '',
+      phone: ''
     }
   },
   created() {
     const { query } = this.$route
-    this.listQuery.customer_id = query.customerID
     this.customer_id = query.customerID
     this.phone = query.phone
-    this.getList()
-    this.fetchConfig()
+    this.getInfo()
   },
   methods: {
-    getList() {
-      this.listLoading = true
-      fetchWhiteList(this.listQuery, this.$store.getters.token)
-        .then(response => {
-          this.list = response.data.items
-          this.total = response.data.total
-
-          // Just to simulate the time of the request
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1.5 * 1000)
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
-    },
-    fetchConfig() {
-      getConfig(this.$store.getters.token)
-        .then(response => {
-          if (response.data && response.data.config && response.data.config.locale_cryptoCurrencies) {
-            this.coinList = response.data.config.locale_cryptoCurrencies
-          } else {
-            console.error('Invalid response structure', response)
-          }
-        })
-        .catch((e) => {
-          console.error('Error fetching config:', e)
-        })
-    },
-    handleFilter() {
-      this.listLoading = true
-
-      this.listQuery.customer_id = this.customer_id
-      this.listQuery.page = 1
-
-      if (this.listQuery.address === '') {
-        this.getList()
-      } else {
-        searchWhiteList(this.listQuery, this.$store.getters.token)
-          .then(response => {
-            this.list = response.data.items
-            this.total = response.data.total
-
-            // Just to simulate the time of the request
-            setTimeout(() => {
-              this.listLoading = false
-            }, 1.5 * 1000)
-          })
-          .catch(() => {
-            this.listLoading = false
-          })
-      }
-    },
-    resetTemp() {
-      this.temp = {
-        customer_id: this.customer_id,
-        crypto_code: 'BTC',
-        address: ''
-      }
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.listLoading = true
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          if (this.temp.address) {
-            this.temp.address = this.temp.address.trim()
-          }
-          createWhiteList(this.temp, this.$store.getters.token)
-            .then(() => {
-              this.dialogFormVisible = false
-              this.$notify({
-                title: 'Success',
-                message: 'Created Successfully',
-                type: 'success',
-                duration: 2000
-              })
-
-              this.getList()
-            })
-            .catch((e) => {
-              if (e.response && e.response.data && e.response.data.reason && e.response.data.reason === 'ErrWhitelistDuplicate') {
-                this.$notify({
-                  title: 'Failed',
-                  message: 'Address is already exist',
-                  type: 'error',
-                  duration: 3000
-                })
-              }
-              this.listLoading = false
-            })
-        }
-      })
-    },
-    handleDelete(row) {
-      this.listLoading = true
-
-      deleteWhiteList(row.id, this.$store.getters.token)
-        .then(() => {
-          this.getList()
-          this.$notify({
-            title: 'Success',
-            message: 'Delete Successfully',
-            type: 'success',
-            duration: 2000
-          })
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
-    },
-    utc8Time(t) {
-      const utcDate = new Date(t)
-      return utcDate.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+    async getInfo() {
+      const response = await getCustomerDetail(this.customer_id, this.$store.getters.token)
+      this.info = response.data
+      // id_card_front_img_id
+      const frontImgResponse = await getSumsubImage({ inspection_id: this.info.inspection_id, image_id: this.info.id_card_front_img_id }, this.$store.getters.token)
+      const frontImgBlob = new Blob([frontImgResponse.data], { type: 'image/jpeg' })
+      this.urls.id_card_front_img = URL.createObjectURL(frontImgBlob)
+      // id_card_back_img_id
+      const backImgResponse = await getSumsubImage({ inspection_id: this.info.inspection_id, image_id: this.info.id_card_back_img_id }, this.$store.getters.token)
+      const backImgBlob = new Blob([backImgResponse.data], { type: 'image/jpeg' })
+      this.urls.id_card_back_img = URL.createObjectURL(backImgBlob)
+      // selfie_img_ids
+      const selfieImgId = this.info.selfie_img_ids.length > 0 ? this.info.selfie_img_ids[0] : ''
+      const selfieImgResponse = await getSumsubImage({ inspection_id: this.info.inspection_id, image_id: selfieImgId }, this.$store.getters.token)
+      const selfieImgBlob = new Blob([selfieImgResponse.data], { type: 'image/jpeg' })
+      this.urls.selfie_img = URL.createObjectURL(selfieImgBlob)
     }
   }
 }

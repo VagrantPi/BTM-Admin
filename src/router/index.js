@@ -152,6 +152,19 @@ export const asyncRoutes = [
         }
       },
       {
+        id: 'userInfo',
+        path: 'info',
+        component: () => import('@/views/user/components/view'),
+        name: '基本資料',
+        meta: {
+          title: '基本資料',
+          icon: 'user',
+          roles: ['admin'],
+          noCache: true
+        },
+        hidden: true
+      },
+      {
         id: 'transaction',
         path: '/transaction',
         component: () => import('@/views/transaction/index'),

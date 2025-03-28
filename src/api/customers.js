@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import axios from 'axios'
 
 export function fetchList(query, token) {
   if (query.date_range) {
@@ -56,5 +57,23 @@ export function searchWhiteList(query, token) {
     method: 'get',
     params: query,
     headers: { token }
+  })
+}
+
+export function getCustomerDetail(customer_id, token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/' + customer_id + '/detail',
+    method: 'get',
+    headers: { token }
+  })
+}
+
+export function getSumsubImage(query, token) {
+  return axios({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/image',
+    method: 'get',
+    params: query,
+    headers: { token },
+    responseType: 'blob'
   })
 }
