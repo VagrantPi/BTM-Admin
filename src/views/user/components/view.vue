@@ -61,6 +61,11 @@
     <br>
 
     <el-tabs type="border-card">
+      <el-tab-pane label="用戶備註">
+        <NoteTable
+          :is-detail="true"
+        />
+      </el-tab-pane>
       <el-tab-pane label="交易紀錄">
         <TxsTable
           :is-detail="true"
@@ -85,10 +90,11 @@ import waves from '@/directive/waves' // waves directive
 import TxsTable from '@/components/Users/txs/index.vue'
 import AddressWhiteList from '@/components/Users/addressWhiteList/index.vue'
 import ReviewHistory from '@/components/Users/reviewHistory/index.vue'
+import NoteTable from '@/components/Users/note/index.vue'
 
 export default {
   name: 'WhitelistView',
-  components: { TxsTable, AddressWhiteList, ReviewHistory },
+  components: { TxsTable, AddressWhiteList, ReviewHistory, NoteTable },
   directives: { waves },
   data() {
     return {

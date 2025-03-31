@@ -77,3 +77,21 @@ export function getSumsubImage(query, token) {
     responseType: 'blob'
   })
 }
+
+export function addCustomerNote(customer_id, data, token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/' + customer_id + '/note',
+    method: 'post',
+    data,
+    headers: { token }
+  })
+}
+
+export function getCustomerNotes(query, customer_id, token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/' + customer_id + '/notes',
+    method: 'get',
+    params: query,
+    headers: { token }
+  })
+}
