@@ -147,7 +147,8 @@ export default {
         address: '',
         email: '',
         name: '',
-        customer_date_range: ''
+        customer_date_range: '',
+        active: true
       }
     }
   },

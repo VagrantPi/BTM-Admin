@@ -28,6 +28,7 @@
         <div class="block">
           <span class="demonstration">自拍照</span>
           <el-image
+            style="height: 400px;"
             :src="urls.selfie_img"
             fit="cover"
           />
