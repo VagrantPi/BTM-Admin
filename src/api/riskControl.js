@@ -16,25 +16,27 @@ export function fetchRiskControlRole(customer_id, token) {
   })
 }
 
-export function updateRiskControlRole(customer_id, role_id, token) {
+export function updateRiskControlRole(customer_id, form, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/risk_control/' + customer_id + '/role',
     method: 'patch',
     headers: { token },
     data: {
-      role_id
+      role_id: form.role,
+      reason: form.reason
     }
   })
 }
 
-export function updateRiskControlLimit(customer_id, daily_limit, monthly_limit, token) {
+export function updateRiskControlLimit(customer_id, form, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/risk_control/' + customer_id + '/limit',
     method: 'patch',
     headers: { token },
     data: {
-      daily_limit,
-      monthly_limit
+      daily_limit: form.daily_limit,
+      monthly_limit: form.monthly_limit,
+      reason: form.limit_reason
     }
   }).catch(err => {
     const { response } = err

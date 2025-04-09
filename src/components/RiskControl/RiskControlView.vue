@@ -11,11 +11,21 @@
   <div class="app-container">
     <h1>{{ title }} {{ phone }}</h1>
 
-    <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
-      <el-tab-pane label="角色權限" name="role">
-        <el-form ref="form" :rules="rules" :model="form" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
-          <el-form-item label="目前角色權限" prop="role">
-            <el-select v-model="role" placeholder="目前角色權限">
+    <el-tabs v-model="activeName1" type="border-card" class="demo-tabs">
+      <el-tab-pane label="角色變更" name="role">
+        <el-form ref="form1" :inline="true" :model="form1" label-position="left" style="margin:30px;">
+          <el-form-item
+            :rules="[
+              {
+                required: true,
+                message: '必填',
+                trigger: 'blur',
+              },
+            ]"
+            label="目前角色權限"
+            prop="role"
+          >
+            <el-select v-model="form1.role" placeholder="目前角色權限">
               <el-option
                 v-for="item in roles"
                 :key="item.id"
@@ -25,114 +35,67 @@
               />
             </el-select>
           </el-form-item>
+          <el-form-item
+            :rules="[
+              {
+                required: true,
+                message: '必填',
+                trigger: 'blur',
+              },
+            ]"
+            label="角色變更原因"
+            prop="reason"
+          >
+            <el-select v-model="form1.reason" placeholder="角色變更原因">
+              <el-option
+                v-for="item in reasons"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+              />
+            </el-select>
+          </el-form-item>
+          <el-button id="update-role-button" type="warning" @click="updateRole()">
+            Update
+          </el-button>
         </el-form>
-        <el-button type="warning" @click="updateRole()">
-          Update
-        </el-button>
       </el-tab-pane>
+    </el-tabs>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <el-tabs v-model="activeName2" type="border-card" class="demo-tabs">
       <el-tab-pane label="限額" name="limit">
-        <el-form ref="form" :rules="rules" :model="form" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
+        <el-form ref="form2" :rules="rules" :model="form2" label-position="left" label-width="150px" style="margin:30px;">
           <el-form-item label="日限額" prop="daily_limit" :min="0">
-            <el-input v-model.number="form.daily_limit" :disabled="!isLimitEditable" />
+            <el-input v-model.number="form2.daily_limit" :disabled="!isLimitEditable" />
           </el-form-item>
           <el-form-item label="月限額" prop="monthly_limit" :min="0">
-            <el-input v-model.number="form.monthly_limit" :disabled="!isLimitEditable" />
+            <el-input v-model.number="form2.monthly_limit" :disabled="!isLimitEditable" />
+          </el-form-item>
+          <el-form-item label="限額變更原因" prop="limit_reason">
+            <el-select v-model="form2.limit_reason" placeholder="限額變更原因">
+              <el-option
+                v-for="item in limit_reasons"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+              />
+            </el-select>
           </el-form-item>
         </el-form>
         <el-button type="warning" :disabled="!isLimitEditable" @click="updateLimit()">
           Update
         </el-button>
       </el-tab-pane>
-      <el-tab-pane label="修改紀錄" name="log">
+      <el-tab-pane label="EDD參數" name="log">
         <br>
-        <div class="filter-container">
-          <el-date-picker
-            v-model="listQuery.date_range"
-            type="datetimerange"
-            style="margin-left: 5px; padding-top: 7px; width: 400px;"
-            range-separator="至"
-            start-placeholder="限額修改開始日期"
-            end-placeholder="限額修改結束日期"
-            clearable
-          />
-          <el-button
-            v-waves
-            class="filter-item"
-            type="primary"
-            icon="el-icon-search"
-            @click="handleFilter"
-          >
-            Search
-          </el-button>
-          <el-button
-            v-waves
-            class="filter-item"
-            type="primary"
-            icon="el-icon-refresh"
-            @click="handleClearFilter"
-          >
-            Clear
-          </el-button>
-        </div>
-
-        <el-table
-          :key="tableKey"
-          v-loading="listLoading"
-          :data="list"
-          border
-          fit
-          highlight-current-row
-          style="width: 100%;"
-        >
-          <el-table-column label="時間" prop="created_at" align="center">
-            <template slot-scope="{row}">
-              <span>{{ utc8Time(row.created_at) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作類型" prop="operation_type" align="center">
-            <template slot-scope="{row}">
-              <span>{{ operationType2String(row.operation_type) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="修改前角色權限" prop="before_role" align="center">
-            <template slot-scope="{row}">
-              <span>{{ row.before_value ? role2String(row.before_value.role) : '' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="修改前日限額" prop="before_daily_limit" align="center">
-            <template slot-scope="{row}">
-              <span>{{ row.before_value ? row.before_value.daily_limit : '' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="修改前月限額" prop="before_monthly_limit" align="center">
-            <template slot-scope="{row}">
-              <span>{{ row.before_value ? row.before_value.monthly_limit : '' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="修改後角色權限" prop="after_role" align="center">
-            <template slot-scope="{row}">
-              <span>{{ row.after_value ? role2String(row.after_value.role) : '' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="修改後日限額" prop="after_daily_limit" align="center">
-            <template slot-scope="{row}">
-              <span>{{ row.after_value ? row.after_value.daily_limit : '' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="修改後月限額" prop="after_monthly_limit" align="center">
-            <template slot-scope="{row}">
-              <span>{{ row.after_value ? row.after_value.monthly_limit : '' }}</span>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <pagination
-          v-show="total > 0"
-          :total="total"
-          :page.sync="listQuery.page"
-          :limit.sync="listQuery.limit"
-          @pagination="getList"
-        />
+        <br>
+        <br>
+        <br>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -140,14 +103,13 @@
 
 <script>
 import waves from '@/directive/waves' // waves directive
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+// import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 import { fetchRiskControlRoleList, fetchRiskControlRole, updateRiskControlRole, updateRiskControlLimit } from '@/api/riskControl'
-import { getChangeLogs } from '@/api/btm'
 
 export default {
   name: 'RiskControlView',
-  components: { Pagination },
+  // components: { Pagination },
   directives: { waves },
   props: {
     type: {
@@ -187,15 +149,41 @@ export default {
         monthly_limit: [
           { required: true, message: '不能為空' },
           { type: 'number', message: '限額必須為數字', trigger: 'blur' }
+        ],
+        limit_reason: [
+          { required: true, message: '必填', trigger: 'blur' }
         ]
       },
-      form: {
-        daily_limit: 0,
-        monthly_limit: 0
+      form1: {
+        role: 0,
+        reason: ''
       },
-      activeName: 'role',
-      role: 0,
-      user_role: 0
+      form2: {
+        daily_limit: 0,
+        monthly_limit: 0,
+        limit_reason: ''
+      },
+      activeName1: 'role',
+      activeName2: 'limit',
+      user_role: 0,
+      reasons: [
+        { name: '高風險職業' },
+        { name: '關懷客戶' },
+        { name: '大額兌換客戶' },
+        { name: '曾綁定非本人地址' },
+        { name: '曾為告誡名單' },
+        { name: '經評估須設為灰名單' },
+        { name: 'STR' },
+        { name: '告誡名單' },
+        { name: '經評估須設為黑名單' },
+        { name: '客戶申請關閉帳戶' }
+      ],
+      limit_reasons: [
+        { name: '客戶主動申請' },
+        { name: '加強監控' },
+        { name: '其他特殊狀況' }
+      ],
+      reason: ''
     }
   },
   computed: {
@@ -216,101 +204,107 @@ export default {
     this.listQuery.customer_id = this.customerId
     this.getRoleList()
     this.fetchRole()
-    this.getList()
   },
   methods: {
     updateLimit() {
-      this.$alert('確定要更新角色限額嗎?', '更新角色限額', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        callback: action => {
-          updateRiskControlLimit(this.customer_id, this.form.daily_limit, this.form.monthly_limit, this.$store.getters.token)
-            .then(response => {
-              this.$message({
-                type: 'success',
-                message: '更新成功'
-              })
-              if (this.type === 'gray') {
-                this.getRoleList()
-                this.fetchRole()
-                this.getList()
-              } else {
-                this.$router.push({ path: '/risk_control/graylist', query: { customerID: this.customer_id }})
-              }
-            })
-            .catch(err => {
-              if (err && err.msg && err.msg.includes('customer is black')) {
-                this.$message({
-                  type: 'error',
-                  message: '用戶已是黑名單，無法更新限額'
+      this.$refs.form2.validate(valid => {
+        if (valid) {
+          this.$alert('確定要更新角色限額嗎?', '更新角色限額', {
+            type: 'warning',
+            confirmButtonText: '确定',
+            callback: action => {
+              updateRiskControlLimit(this.customer_id, this.form2, this.$store.getters.token)
+                .then(response => {
+                  this.$message({
+                    type: 'success',
+                    message: '更新成功'
+                  })
+                  this.getRoleList()
+                  this.fetchRole()
                 })
-              }
-              if (err && err.msg && err.msg.includes('no limit update')) {
-                this.$message({
-                  type: 'error',
-                  message: '限額數量跟舊的一致'
+                .catch(err => {
+                  if (err && err.msg && err.msg.includes('customer is black')) {
+                    this.$message({
+                      type: 'error',
+                      message: '用戶已是黑名單，無法更新限額'
+                    })
+                  }
+                  if (err && err.msg && err.msg.includes('no limit update')) {
+                    this.$message({
+                      type: 'error',
+                      message: '限額數量跟舊的一致'
+                    })
+                  }
                 })
-              }
-            })
+            }
+          })
         }
       })
     },
     updateRole() {
-      if (this.role === this.user_role) {
-        this.$message({
-          message: '未更動角色權限',
-          type: 'warning'
-        })
-        return
-      }
-      this.$alert('確定要更新角色權限嗎?', '更新角色權限', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        callback: action => {
-          updateRiskControlRole(this.customer_id, this.role, this.$store.getters.token)
-            .then(response => {
-              switch (this.type) {
-                case 'black':
-                  switch (this.role) {
-                    case 2:
-                      this.$router.push({ path: '/risk_control/graylist', query: { customerID: this.customer_id }})
-                      break
-                    case 1:
-                      this.$router.push({ path: '/risk_control/whitelist', query: { customerID: this.customer_id }})
-                      break
-                  }
-                  break
-                case 'gray':
-                  switch (this.role) {
-                    case 1:
-                      this.$router.push({ path: '/risk_control/whitelist', query: { customerID: this.customer_id }})
-                      break
-                    case 3:
-                      this.$router.push({ path: '/risk_control/blacklist', query: { customerID: this.customer_id }})
-                      break
-                  }
-                  break
-                case 'white':
-                  switch (this.role) {
-                    case 2:
-                      this.$router.push({ path: '/risk_control/graylist', query: { customerID: this.customer_id }})
-                      break
-                    case 3:
-                      this.$router.push({ path: '/risk_control/blacklist', query: { customerID: this.customer_id }})
-                      break
-                  }
-                  break
-              }
+      this.$refs.form1.validate((valid) => {
+        if (valid) {
+          if (this.form1.role === this.user_role) {
+            this.$message({
+              message: '未更動角色權限',
+              type: 'warning'
             })
+            return
+          }
+          this.$alert('確定要更新角色權限嗎?', '更新角色權限', {
+            type: 'warning',
+            confirmButtonText: '确定',
+            callback: action => {
+              updateRiskControlRole(this.customer_id, this.form1, this.$store.getters.token)
+                .then(response => {
+                  this.$message({
+                    type: 'success',
+                    message: '更新成功'
+                  })
+                  switch (this.type) {
+                    case 'black':
+                      switch (this.form1.role) {
+                        case 2:
+                          this.$router.push({ path: '/risk_control/graylist/view', query: { customerID: this.customer_id, phone: this.phone }})
+                          break
+                        case 1:
+                          this.$router.push({ path: '/risk_control/whitelist/view', query: { customerID: this.customer_id, phone: this.phone }})
+                          break
+                      }
+                      break
+                    case 'gray':
+                      switch (this.form1.role) {
+                        case 1:
+                          this.$router.push({ path: '/risk_control/whitelist/view', query: { customerID: this.customer_id, phone: this.phone }})
+                          break
+                        case 3:
+                          this.$router.push({ path: '/risk_control/blacklist/view', query: { customerID: this.customer_id, phone: this.phone }})
+                          break
+                      }
+                      break
+                    case 'white':
+                      switch (this.form1.role) {
+                        case 2:
+                          this.$router.push({ path: '/risk_control/graylist/view', query: { customerID: this.customer_id, phone: this.phone }})
+                          break
+                        case 3:
+                          this.$router.push({ path: '/risk_control/blacklist/view', query: { customerID: this.customer_id, phone: this.phone }})
+                          break
+                      }
+                      break
+                  }
+                })
+            }
+          })
         }
       })
     },
     fetchRole() {
       fetchRiskControlRole(this.customer_id, this.$store.getters.token).then(response => {
-        this.role = response.data.role_id
+        this.form1.role = response.data.role_id
         this.user_role = response.data.role_id
-        this.form.daily_limit = parseInt(response.data.daily_limit)
-        this.form.monthly_limit = parseInt(response.data.monthly_limit)
+        this.form2.daily_limit = parseInt(response.data.daily_limit)
+        this.form2.monthly_limit = parseInt(response.data.monthly_limit)
       })
     },
     getRoleList() {
@@ -322,49 +316,6 @@ export default {
           this.listLoading = false
         }, 0.5 * 1000)
       })
-    },
-    getList() {
-      this.listLoading = true
-      getChangeLogs(this.listQuery, this.$store.getters.token).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1 * 1000)
-      })
-    },
-    handleClearFilter() {
-      this.listQuery.date_range = ''
-
-      this.getRoleList()
-      this.fetchRole()
-      this.getList()
-      setTimeout(() => {
-        this.listLoading = false
-      }, 1 * 1000)
-    },
-    handleFilter() {
-      this.listQuery.page = 1
-
-      getChangeLogs(this.listQuery, this.$store.getters.token).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1 * 1000)
-      })
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
     },
     resetTemp() {
       this.temp = {

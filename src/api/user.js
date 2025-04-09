@@ -33,6 +33,14 @@ export function userList(query, token) {
   })
 }
 
+export function userListLite(token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/user/list/lite',
+    method: 'get',
+    headers: { token }
+  })
+}
+
 export function userCreate(token, data) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/user/one',

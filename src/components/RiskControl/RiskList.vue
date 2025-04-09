@@ -7,7 +7,7 @@
   <div class="app-container">
     <h1>{{ title }}</h1>
     <el-alert
-      title="4 種搜尋條件只能擇一"
+      title="3 種搜尋條件只能擇一"
       type="info"
       show-icon
       :description="description"
@@ -16,35 +16,24 @@
     <div class="filter-container">
       <el-input
         v-model="listQuery.query"
-        placeholder="Customer ID/Phone"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      <el-input
-        v-model="listQuery.address"
-        placeholder="Customers Address(必須完全相同)"
+        placeholder="Customer ID"
         style="width: 280px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
-      <el-date-picker
-        v-model="listQuery.customer_date_range"
-        type="datetimerange"
-        style="margin-left: 5px; padding-top: 7px; width: 400px;"
-        range-separator="至"
-        start-placeholder="客戶建立開始日期"
-        end-placeholder="客戶建立結束日期"
-        clearable
+      <el-input
+        v-model="listQuery.name"
+        placeholder="姓名"
+        style="width: 280px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
       />
-      <el-date-picker
-        v-model="listQuery.date_range"
-        type="datetimerange"
-        style="margin-left: 5px; padding-top: 7px; width: 400px;"
-        range-separator="至"
-        start-placeholder="白名單建立開始日期"
-        end-placeholder="白名單建立結束日期"
-        clearable
+      <el-input
+        v-model="listQuery.phone"
+        placeholder="Phone"
+        style="width: 280px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
       />
       <el-button
         v-waves
@@ -84,19 +73,14 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Customer Name" prop="name" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Phone" prop="Phone" align="center">
         <template slot-scope="{row}">
           <span>{{ row.phone }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Customers Created Time" width="350" align="center">
-        <template slot-scope="{row}">
-          <span>{{ utc8Time(row.created_at) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="First Bind Whitelist Time" width="350" align="center">
-        <template slot-scope="{row}">
-          <span>{{ utc8Time(row.first_white_list_created) }}</span>
         </template>
       </el-table-column>
       <el-table-column v-if="showReason" label="reason" align="center">
@@ -104,10 +88,10 @@
           <span>{{ reason(row.is_admin_block, row.is_cib_block, row.is_lamassu_block) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Limit" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="修改紀錄" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Limit
+          <el-button type="primary" size="mini" @click="handleLink(row)">
+            詳細資訊
           </el-button>
         </template>
       </el-table-column>
@@ -135,7 +119,7 @@ export default {
   props: {
     title: {
       type: String,
-      required: true
+      default: ''
     },
     description: {
       type: String,
@@ -160,9 +144,8 @@ export default {
         page: 1,
         limit: 10,
         query: '',
-        address: '',
-        date_range: '',
-        customer_date_range: '',
+        name: '',
+        phone: '',
         customer_type: this.customerType
       }
     }
@@ -190,9 +173,8 @@ export default {
         page: 1,
         limit: 10,
         query: '',
-        address: '',
-        date_range: '',
-        customer_date_range: '',
+        name: '',
+        phone: '',
         customer_type: this.customerType
       }
 
@@ -226,8 +208,8 @@ export default {
         type: ''
       }
     },
-    handleUpdate(row) {
-      this.$emit('update', row)
+    handleLink(row) {
+      this.$router.push({ path: '/risk_control/history', query: { customerID: row.id, phone: row.phone }})
     },
     utc8Time(t) {
       if (!t) return ''
