@@ -64,7 +64,10 @@
     <el-tabs type="border-card">
       <el-tab-pane label="用戶備註">
         <NoteTable
-          :is-detail="true"
+          v-if="customer_id && phone"
+          :customer-id="customer_id"
+          :phone="phone"
+          :note-type="1"
         />
       </el-tab-pane>
       <el-tab-pane label="交易紀錄">

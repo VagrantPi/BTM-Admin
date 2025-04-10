@@ -66,45 +66,51 @@ export default {
   components: { Pagination },
   directives: { waves },
   props: {
-    isDetail: {
-      type: Boolean,
-      default: false
+    customerId: {
+      type: String,
+      required: true
+    },
+    phone: {
+      type: String,
+      required: true
+    },
+    noteType: {
+      type: Number,
+      required: true
     }
   },
   data() {
     return {
-      customer_id: '',
-      phone: '',
       tableKey: 0,
       list: null,
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20
+        limit: 10,
+        customer_id: '',
+        note_type: 0
       },
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       dialogFormVisible: false,
       temp: {
-        note: ''
+        note: '',
+        note_type: 0
       }
     }
   },
   created() {
-    if (this.isDetail) {
-      const { query } = this.$route
-      this.listQuery.customer_id = query.customerID
-      this.customer_id = query.customerID
-      this.phone = query.phone
-    }
+    this.listQuery.customer_id = this.customerId
+    this.listQuery.note_type = this.noteType
+    this.temp.note_type = this.noteType
     this.getList()
   },
   methods: {
     getList() {
       this.listLoading = true
-      getCustomerNotes(this.listQuery, this.customer_id, this.$store.getters.token)
+      getCustomerNotes(this.listQuery, this.customerId, this.$store.getters.token)
         .then(response => {
           this.list = response.data.items
           this.total = response.data.total
@@ -126,7 +132,7 @@ export default {
       this.dialogFormVisible = true
     },
     createData() {
-      addCustomerNote(this.customer_id, this.temp, this.$store.getters.token)
+      addCustomerNote(this.customerId, this.temp, this.$store.getters.token)
         .then(() => {
           this.dialogFormVisible = false
           this.$notify({

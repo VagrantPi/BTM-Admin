@@ -46,7 +46,7 @@
           </el-table-column>
           <el-table-column label="權限變更原因" prop="reason" align="center">
             <template slot-scope="{row}">
-              <span>{{ !row.before_value ? '初始化' : row.before_value.role === row.after_value.role && ((row.before_value.daily_limit !== row.after_value.daily_limit) || (row.before_value.monthly_limit !== row.after_value.monthly_limit)) ? row.after_value.change_limit_reason : 'X' }}</span>
+              <span>{{ !row.before_value ? '初始化' : (row.before_value.role === row.after_value.role || row.before_value.role !== row.after_value.role && row.after_value.change_role_reason === "系統自動切換") && ((row.before_value.daily_limit !== row.after_value.daily_limit) || (row.before_value.monthly_limit !== row.after_value.monthly_limit)) ? row.after_value.change_limit_reason : 'X' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作人員" prop="operation_user_id" align="center">

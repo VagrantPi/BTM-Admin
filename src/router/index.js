@@ -204,9 +204,9 @@ export const asyncRoutes = [
         }
       },
       {
-        id: 'whitelistView',
-        path: 'whitelist/view',
-        component: () => import('@/views/riskWhitelist/view'),
+        id: 'riskView',
+        path: 'view',
+        component: () => import('@/views/risk/view'),
         name: '風控白名單限額編輯',
         hidden: true,
         meta: {
@@ -214,32 +214,32 @@ export const asyncRoutes = [
           roles: ['admin']
         }
       },
-      {
-        id: 'graylistView',
-        path: 'graylist/view',
-        component: () => import('@/views/riskGraylist/view'),
-        name: '風控灰名單限額編輯',
-        hidden: true,
-        meta: {
-          title: '風控灰名單限額編輯',
-          roles: ['admin']
-        }
-      },
-      {
-        id: 'blacklistView',
-        path: 'blacklist/view',
-        component: () => import('@/views/riskBlacklist/view'),
-        name: '風控黑名單限額編輯',
-        hidden: true,
-        meta: {
-          title: '風控黑名單限額編輯',
-          roles: ['admin']
-        }
-      },
+      // {
+      //   id: 'graylistView',
+      //   path: 'graylist/view',
+      //   component: () => import('@/views/riskGraylist/view'),
+      //   name: '風控灰名單限額編輯',
+      //   hidden: true,
+      //   meta: {
+      //     title: '風控灰名單限額編輯',
+      //     roles: ['admin']
+      //   }
+      // },
+      // {
+      //   id: 'blacklistView',
+      //   path: 'blacklist/view',
+      //   component: () => import('@/views/riskBlacklist/view'),
+      //   name: '風控黑名單限額編輯',
+      //   hidden: true,
+      //   meta: {
+      //     title: '風控黑名單限額編輯',
+      //     roles: ['admin']
+      //   }
+      // },
       {
         id: 'riskControlHistory',
         path: 'history',
-        component: () => import('@/views/riskControlHistory/view'),
+        component: () => import('@/views/risk/history'),
         name: '風控修改紀錄',
         hidden: true,
         meta: {

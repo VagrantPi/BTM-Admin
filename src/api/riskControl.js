@@ -46,3 +46,21 @@ export function updateRiskControlLimit(customer_id, form, token) {
     return Promise.reject(err)
   })
 }
+
+export function updateRiskControlEdd(customer_id, form, token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/risk_control/' + customer_id + '/edd',
+    method: 'patch',
+    headers: { token },
+    data: {
+      level1: form.level1,
+      level2: form.level2
+    }
+  }).catch(err => {
+    const { response } = err
+    if (response) {
+      return Promise.reject(response.data)
+    }
+    return Promise.reject(err)
+  })
+}
