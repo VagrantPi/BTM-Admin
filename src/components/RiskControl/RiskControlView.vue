@@ -81,9 +81,15 @@
           <el-form-item label="Level1 交易限額" prop="level1" :min="0">
             <el-input v-model.number="form3.level1" :disabled="!isLimitEditable" />
           </el-form-item>
+          <el-form-item label="累積交易金額天數" prop="level1_days">
+            <el-input v-model.number="form3.level1_days" :disabled="!isLimitEditable" />
+          </el-form-item>
           <br>
           <el-form-item label="Level2 交易限額" prop="level2" :min="0">
             <el-input v-model.number="form3.level2" :disabled="!isLimitEditable" />
+          </el-form-item>
+          <el-form-item label="累積交易金額天數" prop="level2_days">
+            <el-input v-model.number="form3.level2_days" :disabled="!isLimitEditable" />
           </el-form-item>
           <br>
           <el-button type="warning" :disabled="!isLimitEditable" @click="updateEdd()">
@@ -124,11 +130,6 @@ export default {
   components: { NoteTable },
   directives: { waves },
   props: {
-    type: {
-      type: String,
-      required: true,
-      validator: value => ['white', 'gray', 'black'].includes(value)
-    },
     phone: {
       type: String,
       required: true
@@ -143,6 +144,7 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
+      type: 1,
       listLoading: true,
       listQuery: {
         page: 1,
@@ -181,6 +183,14 @@ export default {
         level2: [
           { required: true, message: '不能為空' },
           { type: 'number', message: '限額必須為數字', trigger: 'blur' }
+        ],
+        level1_days: [
+          { required: true, message: '不能為空' },
+          { type: 'number', message: '天數必須為數字', trigger: 'blur' }
+        ],
+        level2_days: [
+          { required: true, message: '不能為空' },
+          { type: 'number', message: '天數必須為數字', trigger: 'blur' }
         ]
       },
       form1: {
@@ -194,7 +204,9 @@ export default {
       },
       form3: {
         level1: 0,
-        level2: 0
+        level2: 0,
+        level1_days: 0,
+        level2_days: 0
       },
       activeName1: 'role',
       activeName2: 'limit',
@@ -226,41 +238,6 @@ export default {
     this.listQuery.customer_id = this.customerId
     this.getRoleList()
     this.fetchRole()
-
-    switch (this.type) {
-      case 'white':
-        this.reasons = [
-          { name: '高風險職業' },
-          { name: '關懷客戶' },
-          { name: '大額兌換客戶' },
-          { name: '曾綁定非本人地址' },
-          { name: '曾為告誡名單' },
-          { name: '經評估須設為灰名單' },
-          { name: 'STR' },
-          { name: '告誡名單' },
-          { name: '經評估須設為黑名單' },
-          { name: '客戶申請關閉帳戶' }
-        ]
-        break
-      case 'gray':
-        this.reasons = [
-          { name: '非高風險職業' },
-          { name: '經評估可設為白名單' },
-          { name: 'STR' },
-          { name: '告誡名單' },
-          { name: '曾為告誡名單' },
-          { name: '經評估須設為黑名單' },
-          { name: '客戶申請關閉帳戶' }
-        ]
-        break
-      case 'black':
-        this.reasons = [
-          { name: '移除告誡名單' },
-          { name: '經評估可設為白名單' },
-          { name: '經評估可設為灰名單' }
-        ]
-        break
-    }
   },
   methods: {
     updateLimit() {
@@ -276,6 +253,13 @@ export default {
                     type: 'success',
                     message: '更新成功'
                   })
+
+                  // 白名單只要有更新限額成功，則會切換成灰名單
+                  if (this.type === 'white') {
+                    this.$router.push({ path: '/risk_control/view', query: { customerID: this.customerId, phone: this.phone, risk_type: 'gray' }, force: true })
+                    location.reload()
+                  }
+
                   this.getRoleList()
                   this.fetchRole()
                 })
@@ -405,6 +389,44 @@ export default {
         this.form2.monthly_limit = parseInt(response.data.monthly_limit)
         this.form3.level1 = parseInt(response.data.level1)
         this.form3.level2 = parseInt(response.data.level2)
+        this.form3.level1_days = parseInt(response.data.level1_days)
+        this.form3.level2_days = parseInt(response.data.level2_days)
+        this.type = this.roleId2String(response.data.role_id)
+
+        switch (this.type) {
+          case 'white':
+            this.reasons = [
+              { name: '高風險職業' },
+              { name: '關懷客戶' },
+              { name: '大額兌換客戶' },
+              { name: '曾綁定非本人地址' },
+              { name: '曾為告誡名單' },
+              { name: '經評估須設為灰名單' },
+              { name: 'STR' },
+              { name: '告誡名單' },
+              { name: '經評估須設為黑名單' },
+              { name: '客戶申請關閉帳戶' }
+            ]
+            break
+          case 'gray':
+            this.reasons = [
+              { name: '非高風險職業' },
+              { name: '經評估可設為白名單' },
+              { name: 'STR' },
+              { name: '告誡名單' },
+              { name: '曾為告誡名單' },
+              { name: '經評估須設為黑名單' },
+              { name: '客戶申請關閉帳戶' }
+            ]
+            break
+          case 'black':
+            this.reasons = [
+              { name: '移除告誡名單' },
+              { name: '經評估可設為白名單' },
+              { name: '經評估可設為灰名單' }
+            ]
+            break
+        }
       })
     },
     getRoleList() {
@@ -460,6 +482,18 @@ export default {
           return '刪除'
         default:
           return '未知操作'
+      }
+    },
+    roleId2String(role_id) {
+      switch (role_id) {
+        case 1:
+          return 'white'
+        case 2:
+          return 'gray'
+        case 3:
+          return 'black'
+        default:
+          return '未知權限'
       }
     }
   }

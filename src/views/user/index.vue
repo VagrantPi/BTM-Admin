@@ -113,6 +113,13 @@
           </el-button>
         </template>
       </el-table-column>
+      <el-table-column label="風控管理" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="{row}">
+          <el-button type="primary" size="mini" @click="handleRisk(row)">
+            編輯
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination
@@ -215,6 +222,9 @@ export default {
     },
     handleDetail(row) {
       this.$router.push({ path: '/user/info', query: { customerID: row.id, phone: row.phone }})
+    },
+    handleRisk(row) {
+      this.$router.push({ path: '/risk_control/view', query: { customerID: row.id, phone: row.phone }})
     },
     utc8Time(t) {
       if (t === '0001-01-01T00:00:00Z') {

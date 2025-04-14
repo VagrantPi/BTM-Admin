@@ -53,8 +53,7 @@ export function updateRiskControlEdd(customer_id, form, token) {
     method: 'patch',
     headers: { token },
     data: {
-      level1: form.level1,
-      level2: form.level2
+      ...form
     }
   }).catch(err => {
     const { response } = err

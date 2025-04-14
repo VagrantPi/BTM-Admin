@@ -1,10 +1,9 @@
 <template>
   <div>
     <risk-control-view
-      v-if="phone && customer_id && risk_type"
+      v-if="phone && customer_id"
       :phone="phone"
       :customer-id="customer_id"
-      :type="risk_type"
     />
   </div>
 </template>
@@ -20,15 +19,13 @@ export default {
   data() {
     return {
       phone: '',
-      customer_id: '',
-      risk_type: ''
+      customer_id: ''
     }
   },
   created() {
     const { query } = this.$route
     this.phone = query.phone
     this.customer_id = query.customerID
-    this.risk_type = query.risk_type
   }
 }
 </script>
