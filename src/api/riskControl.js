@@ -28,6 +28,14 @@ export function updateRiskControlRole(customer_id, form, token) {
   })
 }
 
+export function resetRiskControlRole(customer_id, token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/risk_control/' + customer_id + '/role/reset',
+    method: 'patch',
+    headers: { token }
+  })
+}
+
 export function updateRiskControlLimit(customer_id, form, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/risk_control/' + customer_id + '/limit',

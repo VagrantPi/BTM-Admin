@@ -28,6 +28,18 @@
               <span>{{ utc8Time(row.created_at) }}</span>
             </template>
           </el-table-column>
+          <el-table-column label="操作" prop="operation" align="center">
+            <template slot-scope="{row}">
+              <span>{{ !row.before_value ?
+                '初始化' :
+                (row.before_value.level1 !== row.after_value.level1 || row.before_value.level2 !== row.after_value.level2) && (row.before_value.role === row.after_value.role) ?
+                  'EDD 修改' :
+                  row.before_value.role !== row.after_value.role ?
+                    '角色修改' :
+                    '限額修改'
+              }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="角色" prop="after_role" align="center">
             <template slot-scope="{row}">
               <span>{{ row.after_value ? role2String(row.after_value.role) : '' }}</span>

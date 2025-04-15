@@ -36,8 +36,11 @@
             </el-select>
           </el-form-item>
           <br>
+          <el-button v-if="type === 'black'" type="warning" @click="updateRole2Origin()">
+            返回原始角色
+          </el-button>
           <el-button type="warning" @click="updateRole()">
-            Update
+            更新
           </el-button>
         </el-form>
       </el-tab-pane>
@@ -123,7 +126,7 @@
 import waves from '@/directive/waves' // waves directive
 import NoteTable from '@/components/Users/note/index.vue'
 
-import { fetchRiskControlRoleList, fetchRiskControlRole, updateRiskControlRole, updateRiskControlLimit, updateRiskControlEdd } from '@/api/riskControl'
+import { fetchRiskControlRoleList, fetchRiskControlRole, updateRiskControlRole, resetRiskControlRole, updateRiskControlLimit, updateRiskControlEdd } from '@/api/riskControl'
 
 export default {
   name: 'RiskControlView',
@@ -247,36 +250,31 @@ export default {
             type: 'warning',
             confirmButtonText: '确定',
             callback: action => {
-              updateRiskControlLimit(this.customerId, this.form2, this.$store.getters.token)
-                .then(response => {
-                  this.$message({
-                    type: 'success',
-                    message: '更新成功'
-                  })
+              if (action === 'confirm') {
+                updateRiskControlLimit(this.customerId, this.form2, this.$store.getters.token)
+                  .then(response => {
+                    this.$message({
+                      type: 'success',
+                      message: '更新成功'
+                    })
 
-                  // 白名單只要有更新限額成功，則會切換成灰名單
-                  if (this.type === 'white') {
-                    this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
                     location.reload()
-                  }
-
-                  this.getRoleList()
-                  this.fetchRole()
-                })
-                .catch(err => {
-                  if (err && err.msg && err.msg.includes('customer is black')) {
-                    this.$message({
-                      type: 'error',
-                      message: '用戶已是黑名單，無法更新限額'
-                    })
-                  }
-                  if (err && err.msg && err.msg.includes('no limit update')) {
-                    this.$message({
-                      type: 'error',
-                      message: '限額數量跟舊的一致'
-                    })
-                  }
-                })
+                  })
+                  .catch(err => {
+                    if (err && err.msg && err.msg.includes('customer is black')) {
+                      this.$message({
+                        type: 'error',
+                        message: '用戶已是黑名單，無法更新限額'
+                      })
+                    }
+                    if (err && err.msg && err.msg.includes('no limit update')) {
+                      this.$message({
+                        type: 'error',
+                        message: '限額數量跟舊的一致'
+                      })
+                    }
+                  })
+              }
             }
           })
         }
@@ -296,53 +294,38 @@ export default {
             type: 'warning',
             confirmButtonText: '确定',
             callback: action => {
-              updateRiskControlRole(this.customerId, this.form1, this.$store.getters.token)
-                .then(response => {
-                  this.$message({
-                    type: 'success',
-                    message: '更新成功'
+              if (action === 'confirm') {
+                updateRiskControlRole(this.customerId, this.form1, this.$store.getters.token)
+                  .then(response => {
+                    this.$message({
+                      type: 'success',
+                      message: '更新成功'
+                    })
+
+                    location.reload()
                   })
-                  switch (this.type) {
-                    case 'black':
-                      switch (this.form1.role) {
-                        case 2:
-                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
-                          location.reload()
-                          break
-                        case 1:
-                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
-                          location.reload()
-                          break
-                      }
-                      break
-                    case 'gray':
-                      switch (this.form1.role) {
-                        case 1:
-                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
-                          location.reload()
-                          break
-                        case 3:
-                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
-                          location.reload()
-                          break
-                      }
-                      break
-                    case 'white':
-                      switch (this.form1.role) {
-                        case 2:
-                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
-                          location.reload()
-                          break
-                        case 3:
-                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
-                          location.reload()
-                          break
-                      }
-                      break
-                  }
-                })
+              }
             }
           })
+        }
+      })
+    },
+    updateRole2Origin() {
+      this.$alert('確定要回復原始角色權限嗎?', '更新角色權限', {
+        type: 'warning',
+        confirmButtonText: '确定',
+        callback: action => {
+          if (action === 'confirm') {
+            resetRiskControlRole(this.customerId, this.$store.getters.token)
+              .then(response => {
+                this.$message({
+                  type: 'success',
+                  message: '更新成功'
+                })
+
+                location.reload()
+              })
+          }
         }
       })
     },
