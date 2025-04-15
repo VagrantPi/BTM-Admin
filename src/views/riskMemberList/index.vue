@@ -35,13 +35,13 @@ export default {
   components: { RiskList },
   methods: {
     handleLinkWhitelist(row) {
-      this.$router.push({ path: '/risk_control/whitelist/view', query: { customerID: row.id, phone: row.phone }})
+      this.$router.push({ path: '/user/whitelist/view', query: { customerID: row.id, phone: row.phone }})
     },
     handleLinkGraylist(row) {
-      this.$router.push({ path: '/risk_control/graylist/view', query: { customerID: row.id, phone: row.phone }})
+      this.$router.push({ path: '/user/graylist/view', query: { customerID: row.id, phone: row.phone }})
     },
     handleLinkBlacklist(row) {
-      this.$router.push({ path: '/risk_control/blacklist/view', query: { customerID: row.id, phone: row.phone }})
+      this.$router.push({ path: '/user/blacklist/view', query: { customerID: row.id, phone: row.phone }})
     }
   }
 }

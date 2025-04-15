@@ -24,6 +24,7 @@
         <div class="label">手機：{{ info.phone_number }}</div>
         <div class="label">Email：{{ info.email }}</div>
         <div class="label">Customer ID：{{ customer_id }}</div>
+        <div class="label">封鎖解除時間：{{ utc8Time(info.suspended_until) }}</div>
       </el-col>
       <el-col :span="8">
         <div class="block">
@@ -114,7 +115,8 @@ export default {
         inspection_id: '',
         id_card_front_img_id: '',
         id_card_back_img_id: '',
-        selfie_img_ids: []
+        selfie_img_ids: [],
+        suspended_until: ''
       },
       urls: {
         id_card_front_img: '',
@@ -176,6 +178,17 @@ export default {
       }
 
       return age
+    },
+
+    utc8Time(t) {
+      if (t === '') {
+        return
+      }
+      if (t === '0001-01-01T00:00:00Z') {
+        return ''
+      }
+      const utcDate = new Date(t)
+      return utcDate.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
     }
   }
 }

@@ -224,7 +224,7 @@ export default {
       this.$router.push({ path: '/user/info', query: { customerID: row.id, phone: row.phone }})
     },
     handleRisk(row) {
-      this.$router.push({ path: '/risk_control/view', query: { customerID: row.id, phone: row.phone }})
+      this.$router.push({ path: '/user/view', query: { customerID: row.id, phone: row.phone }})
     },
     utc8Time(t) {
       if (t === '0001-01-01T00:00:00Z') {

@@ -256,7 +256,7 @@ export default {
 
                   // 白名單只要有更新限額成功，則會切換成灰名單
                   if (this.type === 'white') {
-                    this.$router.push({ path: '/risk_control/view', query: { customerID: this.customerId, phone: this.phone, risk_type: 'gray' }, force: true })
+                    this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
                     location.reload()
                   }
 
@@ -306,11 +306,11 @@ export default {
                     case 'black':
                       switch (this.form1.role) {
                         case 2:
-                          this.$router.push({ path: '/risk_control/view', query: { customerID: this.customerId, phone: this.phone, risk_type: 'gray' }, force: true })
+                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
                           location.reload()
                           break
                         case 1:
-                          this.$router.push({ path: '/risk_control/view', query: { customerID: this.customerId, phone: this.phone, risk_type: 'white' }, force: true })
+                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
                           location.reload()
                           break
                       }
@@ -318,11 +318,11 @@ export default {
                     case 'gray':
                       switch (this.form1.role) {
                         case 1:
-                          this.$router.push({ path: '/risk_control/view', query: { customerID: this.customerId, phone: this.phone, risk_type: 'white' }, force: true })
+                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
                           location.reload()
                           break
                         case 3:
-                          this.$router.push({ path: '/risk_control/view', query: { customerID: this.customerId, phone: this.phone, risk_type: 'black' }, force: true })
+                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
                           location.reload()
                           break
                       }
@@ -330,11 +330,11 @@ export default {
                     case 'white':
                       switch (this.form1.role) {
                         case 2:
-                          this.$router.push({ path: '/risk_control/view', query: { customerID: this.customerId, phone: this.phone, risk_type: 'gray' }, force: true })
+                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
                           location.reload()
                           break
                         case 3:
-                          this.$router.push({ path: '/risk_control/view', query: { customerID: this.customerId, phone: this.phone, risk_type: 'black' }, force: true })
+                          this.$router.push({ path: '/user/view', query: { customerID: this.customerId, phone: this.phone }, force: true })
                           location.reload()
                           break
                       }

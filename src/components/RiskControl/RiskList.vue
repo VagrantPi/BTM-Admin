@@ -85,7 +85,7 @@
       </el-table-column>
       <el-table-column v-if="showReason" label="reason" align="center">
         <template slot-scope="{row}">
-          <span>{{ reason(row.is_admin_block, row.is_cib_block, row.is_lamassu_block) }}</span>
+          <span>{{ is_cib_block ? "告誡名單" : row.edd_type ? eddTypeReason(row.edd_type) : row.change_role_reason }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改紀錄" align="center" class-name="small-padding fixed-width">
@@ -216,12 +216,19 @@ export default {
       const utcDate = new Date(t)
       return utcDate.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
     },
-    reason(is_admin_block, is_cib_block, is_lamassu_block) {
-      const reasons = []
-      if (is_admin_block) reasons.push('後台角色權限調整')
-      if (is_cib_block) reasons.push('告誡名單')
-      if (is_lamassu_block) reasons.push('Lamassu 系統後台封鎖')
-      return reasons.join(', ')
+    eddTypeReason(eddType) {
+      switch (eddType) {
+        case '1_level1':
+          return 'EDD 白名單 level1'
+        case '1_level2':
+          return 'EDD 白名單 level2'
+        case '2_level1':
+          return 'EDD 灰名單 level1'
+        case '2_level2':
+          return 'EDD 灰名單 level2'
+        default:
+          return ''
+      }
     }
   }
 }
