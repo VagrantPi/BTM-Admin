@@ -2,24 +2,28 @@ import request from '@/utils/request'
 import axios from 'axios'
 
 export function fetchList(query, token) {
-  if (query.date_range) {
-    query.white_list_date_start = query.date_range[0]
-    query.white_list_date_end = query.date_range[1]
+  const newQuery = { ...query }
+  if (newQuery.date_range) {
+    newQuery.white_list_date_start = newQuery.date_range[0]
+    newQuery.white_list_date_end = newQuery.date_range[1]
   } else {
-    query.white_list_date_start = undefined
-    query.white_list_date_end = undefined
+    newQuery.white_list_date_start = undefined
+    newQuery.white_list_date_end = undefined
   }
-  if (query.customer_date_range) {
-    query.customer_date_start = query.customer_date_range[0]
-    query.customer_date_end = query.customer_date_range[1]
+  if (newQuery.customer_date_range) {
+    newQuery.customer_date_start = newQuery.customer_date_range[0]
+    newQuery.customer_date_end = newQuery.customer_date_range[1]
   } else {
-    query.customer_date_start = undefined
-    query.customer_date_end = undefined
+    newQuery.customer_date_start = undefined
+    newQuery.customer_date_end = undefined
+  }
+  if (!!newQuery && !!newQuery.phone) {
+    newQuery.query = newQuery.phone.trim()
   }
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/customer/list',
     method: 'get',
-    params: query,
+    params: newQuery,
     headers: { token }
   })
 }

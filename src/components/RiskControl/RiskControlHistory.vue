@@ -171,6 +171,7 @@ export default {
     this.listQuery.customer_id = this.customerId
     this.getList()
     this.getUserList()
+    this.operatorMap.set(-1, '系統')
   },
   methods: {
     getList() {

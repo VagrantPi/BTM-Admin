@@ -10,7 +10,7 @@
       title="3 種搜尋條件只能擇一"
       type="info"
       show-icon
-      :description="description"
+      description="電話前面虛加上 886，e.g. 886976xxxxxx"
     />
     <br>
     <div class="filter-container">
@@ -85,7 +85,7 @@
       </el-table-column>
       <el-table-column v-if="showReason" label="reason" align="center">
         <template slot-scope="{row}">
-          <span>{{ is_cib_block ? "告誡名單" : row.edd_type ? eddTypeReason(row.edd_type) : row.change_role_reason }}</span>
+          <span>{{ row.is_cib_block ? "告誡名單" : row.edd_type ? eddTypeReason(row.edd_type) : row.change_role_reason }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改紀錄" align="center" class-name="small-padding fixed-width">
@@ -184,7 +184,9 @@ export default {
       }, 1 * 1000)
     },
     handleFilter() {
-      this.listQuery.query = this.listQuery.query.trim()
+      if (!!this.listQuery && !!this.listQuery.query) {
+        this.listQuery.query = this.listQuery.query.trim()
+      }
       this.listQuery.page = 1
 
       fetchList(this.listQuery, this.$store.getters.token).then(response => {
