@@ -69,13 +69,13 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/main',
     children: [
       {
-        path: 'dashboard',
+        path: 'main',
         component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        name: '主選單',
+        meta: { title: '主選單', icon: 'component', affix: true }
       }
     ]
   },
@@ -100,6 +100,26 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  {
+    id: 'viewBar',
+    path: '/view',
+    name: '圖表',
+    component: Layout,
+    meta: {
+      roles: ['admin'],
+      title: '圖表',
+      icon: 'component'
+    },
+    children: [
+      {
+        id: 'viewDashboard',
+        path: 'dashboard',
+        component: () => import('@/views/dashboard/index'),
+        name: 'Dashboard',
+        meta: { title: 'Dashboard', icon: 'dashboard', roles: ['admin'] }
+      }
+    ]
+  },
   {
     id: 'permissionBar',
     path: '/permission',
