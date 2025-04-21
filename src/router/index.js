@@ -114,7 +114,7 @@ export const asyncRoutes = [
       {
         id: 'viewDashboard',
         path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/dashboard/view'),
         name: 'Dashboard',
         meta: { title: 'Dashboard', icon: 'dashboard', roles: ['admin'] }
       }
