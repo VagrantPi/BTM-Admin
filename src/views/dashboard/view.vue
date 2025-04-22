@@ -14,7 +14,7 @@
     </el-row>
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart v-if="isFatch && devices.size > 0" :chart-data="lineChartData" :devices="devices" :select-date="selectDate" />
+      <line-chart v-if="isFatch" :chart-data="lineChartData" :select-date="selectDate" />
     </el-row>
   </div>
 </template>
@@ -23,11 +23,10 @@
 import LineChart from './components/PieChart'
 
 const lineChartData = {
-  txVolumnsList: {}
+  txVolumns: {}
 }
 
-import { getTxVolumnsList } from '@/api/view'
-import { getDeviceList } from '@/api/device'
+import { getTxVolumns } from '@/api/view'
 
 export default {
   name: 'DashboardAdmin',
@@ -37,41 +36,28 @@ export default {
   data() {
     return {
       isFatch: false,
-      lineChartData: lineChartData.txVolumnsList,
-      devices: new Map(),
+      lineChartData: lineChartData.txVolumns,
       selectDate: 'today',
       dates: [{
         id: 'today',
         name: '1d'
       }, {
-        id: 'seveDay',
+        id: 'seven_days',
         name: '7d'
       }, {
-        id: 'thirtyDay',
+        id: 'thirty_days',
         name: '30d'
       }]
     }
   },
   mounted() {
     this.fetTxList()
-    this.fetDeviceList()
   },
   methods: {
     fetTxList() {
-      var date = new Date()
-      var endDate = date.toISOString().split('T')[0]
-      date.setDate(date.getDate() - 30)
-      var startDate = date.toISOString().split('T')[0]
-      getTxVolumnsList({ start_date: startDate, end_date: endDate }, this.$store.getters.token).then(response => {
-        this.lineChartData.txVolumnsList = response.data.items
+      getTxVolumns(this.$store.getters.token).then(response => {
+        this.lineChartData.txVolumns = response.data
         this.isFatch = true
-      })
-    },
-    fetDeviceList() {
-      getDeviceList(this.$store.getters.token).then(response => {
-        response.data.items.forEach(device => {
-          this.devices.set(device.device_id, device.name)
-        })
       })
     }
   }
