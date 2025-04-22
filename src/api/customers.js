@@ -99,3 +99,17 @@ export function getCustomerNotes(query, customer_id, token) {
     headers: { token }
   })
 }
+
+export function fetchEddList(query, token) {
+  const newQuery = { ...query }
+  if (newQuery.edd_date_range) {
+    newQuery.edd_start_at = newQuery.edd_date_range[0]
+    newQuery.edd_end_at = newQuery.edd_date_range[1]
+  }
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/list/edd',
+    method: 'get',
+    params: newQuery,
+    headers: { token }
+  })
+}

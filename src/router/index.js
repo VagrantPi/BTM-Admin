@@ -212,44 +212,6 @@ export const asyncRoutes = [
   },
 
   {
-    id: 'riskBar',
-    path: '/risk_control',
-    component: Layout,
-    redirect: '/risk_control/page',
-    alwaysShow: true, // will always show the root menu
-    name: '風控',
-    meta: {
-      title: '風控',
-      icon: 'component',
-      roles: ['admin']
-    },
-    children: [
-      {
-        id: 'riskMemberList',
-        path: 'riskMemberList',
-        component: () => import('@/views/riskMemberList/index'),
-        name: '會員風控管理',
-        meta: {
-          title: '會員風控管理',
-          icon: 'el-icon-warning',
-          roles: ['admin']
-        }
-      },
-      {
-        id: 'riskControlHistory',
-        path: 'history',
-        component: () => import('@/views/risk/history'),
-        name: '會員風控管理 > 修改紀錄',
-        hidden: true,
-        meta: {
-          title: '風控修改紀錄',
-          roles: ['admin']
-        }
-      }
-    ]
-  },
-
-  {
     id: 'reviewBar',
     path: '/review',
     component: Layout,
@@ -310,6 +272,55 @@ export const asyncRoutes = [
           title: '綁定地址編輯',
           roles: ['admin'],
           noCache: true
+        }
+      }
+    ]
+  },
+
+  {
+    id: 'riskBar',
+    path: '/risk_control',
+    component: Layout,
+    redirect: '/risk_control/page',
+    alwaysShow: true, // will always show the root menu
+    name: '風險管理',
+    meta: {
+      title: '風險管理',
+      icon: 'component',
+      roles: ['admin']
+    },
+    children: [
+      {
+        id: 'riskMemberList',
+        path: 'risk_member_list',
+        component: () => import('@/views/riskMemberList/index'),
+        name: '會員風控管理',
+        meta: {
+          title: '會員風控管理',
+          icon: 'el-icon-warning',
+          roles: ['admin']
+        }
+      },
+      {
+        id: 'riskControlHistory',
+        path: 'history',
+        component: () => import('@/views/risk/history'),
+        name: '會員風控管理 > 修改紀錄',
+        hidden: true,
+        meta: {
+          title: '風控修改紀錄',
+          roles: ['admin']
+        }
+      },
+      {
+        id: 'eddList',
+        path: 'edd_list',
+        component: () => import('@/views/risk/eddList'),
+        name: 'EDD名單',
+        meta: {
+          title: 'EDD名單',
+          icon: 'el-icon-warning-outline',
+          roles: ['admin']
         }
       }
     ]
