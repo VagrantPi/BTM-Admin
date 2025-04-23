@@ -24,7 +24,15 @@
         <div class="label">手機：{{ info.phone_number }}</div>
         <div class="label">Email：{{ info.email }}</div>
         <div class="label">Customer ID：{{ customer_id }}</div>
-        <div class="label">封鎖解除時間：{{ utc8Time(info.suspended_until) }}</div>
+        <div class="label">封鎖解除時間：
+          {{
+            info.suspended_until
+              ? new Date(info.suspended_until) > new Date()
+                ? utc8Time(info.suspended_until)
+                : ''
+              : ''
+          }}
+        </div>
       </el-col>
       <el-col :span="8">
         <div class="block">

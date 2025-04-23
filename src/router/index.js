@@ -326,6 +326,33 @@ export const asyncRoutes = [
     ]
   },
 
+  {
+    id: 'settingBar',
+    path: '/setting',
+    component: Layout,
+    redirect: '/setting/page',
+    alwaysShow: true, // will always show the root menu
+    name: '系統參數設定',
+    meta: {
+      title: '系統參數設定',
+      icon: 'el-icon-document',
+      roles: ['admin']
+    },
+    children: [
+      {
+        id: 'systemSetting',
+        path: 'page',
+        component: () => import('@/views/setting/index'),
+        name: '設定內容',
+        meta: {
+          title: '設定內容',
+          icon: 'el-icon-edit-outline',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+
   // 404 page must be placed at the end !!!
   { id: '404', path: '*', redirect: '/404', hidden: true }
 ]
