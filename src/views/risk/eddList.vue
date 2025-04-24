@@ -177,7 +177,9 @@ export default {
                   message: '更新成功'
                 })
 
-                location.reload()
+                setTimeout(() => {
+                  location.reload()
+                }, 500)
               })
           }
         }

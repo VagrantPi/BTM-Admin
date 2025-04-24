@@ -53,6 +53,7 @@
 
     <el-tabs v-if="type !== 'black'" v-model="activeName2" type="border-card" class="demo-tabs">
       <el-tab-pane label="限額" name="limit">
+        <el-alert title="限額與 EDD 需要同時修改" type="info" show-icon />
         <el-form ref="form2" :inline="true" :rules="rules2" :model="form2" label-position="left" style="margin:30px;">
           <el-form-item label="日限額" prop="daily_limit" :min="0">
             <el-input v-model.number="form2.daily_limit" :disabled="!isLimitEditable" />
@@ -74,12 +75,13 @@
           </el-form-item>
           <br>
           <br>
-          <el-button type="warning" :disabled="!isLimitEditable" @click="updateLimit()">
-            Update
+          <el-button type="" :disabled="!isLimitEditable" @click="nextTab()">
+            下一個 tab
           </el-button>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="EDD參數" name="log">
+      <el-tab-pane label="EDD參數" name="edd">
+        <el-alert title="限額與 EDD 需要同時修改" type="info" show-icon />
         <el-form ref="form3" :inline="true" :rules="rules3" :model="form3" label-position="left" style="margin:30px;">
           <el-form-item label="Level1 交易限額" prop="level1" :min="0">
             <el-input v-model.number="form3.level1" :disabled="!isLimitEditable" />
@@ -126,7 +128,7 @@
 import waves from '@/directive/waves' // waves directive
 import NoteTable from '@/components/Users/note/index.vue'
 
-import { fetchRiskControlRoleList, fetchRiskControlRole, updateRiskControlRole, resetRiskControlRole, updateRiskControlLimit, updateRiskControlEdd } from '@/api/riskControl'
+import { fetchRiskControlRoleList, fetchRiskControlRole, updateRiskControlRole, resetRiskControlRole, updateRiskControlLimit } from '@/api/riskControl'
 
 export default {
   name: 'RiskControlView',
@@ -205,12 +207,18 @@ export default {
         monthly_limit: 0,
         limit_reason: ''
       },
+      origin_daily_limit: 0,
+      origin_monthly_limit: 0,
       form3: {
         level1: 0,
         level2: 0,
         level1_days: 0,
         level2_days: 0
       },
+      origin_level1: 0,
+      origin_level2: 0,
+      origin_level1_days: 0,
+      origin_level2_days: 0,
       activeName1: 'role',
       activeName2: 'limit',
       activeName3: 'log',
@@ -243,40 +251,17 @@ export default {
     this.fetchRole()
   },
   methods: {
-    updateLimit() {
+    nextTab() {
       this.$refs.form2.validate(valid => {
         if (valid) {
-          this.$alert('確定要更新角色限額嗎?', '更新角色限額', {
-            type: 'warning',
-            confirmButtonText: '确定',
-            callback: action => {
-              if (action === 'confirm') {
-                updateRiskControlLimit(this.customerId, this.form2, this.$store.getters.token)
-                  .then(response => {
-                    this.$message({
-                      type: 'success',
-                      message: '更新成功'
-                    })
-
-                    location.reload()
-                  })
-                  .catch(err => {
-                    if (err && err.msg && err.msg.includes('customer is black')) {
-                      this.$message({
-                        type: 'error',
-                        message: '用戶已是黑名單，無法更新限額'
-                      })
-                    }
-                    if (err && err.msg && err.msg.includes('no limit update')) {
-                      this.$message({
-                        type: 'error',
-                        message: '限額數量跟舊的一致'
-                      })
-                    }
-                  })
-              }
-            }
-          })
+          if (this.origin_daily_limit === this.form2.daily_limit && this.origin_monthly_limit === this.form2.monthly_limit) {
+            this.$message({
+              message: '沒有限額被調整',
+              type: 'warning'
+            })
+          } else {
+            this.activeName2 = 'edd'
+          }
         }
       })
     },
@@ -302,7 +287,9 @@ export default {
                       message: '更新成功'
                     })
 
-                    location.reload()
+                    setTimeout(() => {
+                      location.reload()
+                    }, 500)
                   })
               }
             }
@@ -323,36 +310,69 @@ export default {
                   message: '更新成功'
                 })
 
-                location.reload()
+                setTimeout(() => {
+                  location.reload()
+                }, 500)
               })
           }
         }
       })
     },
     updateEdd() {
+      if (this.origin_daily_limit === this.form2.daily_limit && this.origin_monthly_limit === this.form2.monthly_limit) {
+        this.$message({
+          message: '更新 EDD 時限額也需要修改',
+          type: 'warning'
+        })
+        this.activeName2 = 'limit'
+        return
+      }
+
+      if (this.origin_level1 === this.form3.level1 && this.origin_level2 === this.form3.level2 && this.origin_level1_days === this.form3.level1_days && this.origin_level2_days === this.form3.level2_days) {
+        this.$message({
+          message: '沒有 EDD 限額或天數被調整',
+          type: 'warning'
+        })
+        return
+      }
       this.$refs.form3.validate(valid => {
         if (valid) {
-          this.$alert('確定要更新 EDD 交易限額嗎?', '更新交易限額', {
+          this.$alert('確定要更新交易限額與 EDD 限額嗎?', '更新交易限額與 EDD 限額', {
             type: 'warning',
             confirmButtonText: '确定',
             callback: action => {
-              updateRiskControlEdd(this.customerId, this.form3, this.$store.getters.token)
+              updateRiskControlLimit(this.customerId, this.form2, this.form3, this.$store.getters.token)
                 .then(response => {
                   this.$message({
                     type: 'success',
                     message: '更新成功'
                   })
-                  this.getRoleList()
-                  this.fetchRole()
+
+                  setTimeout(() => {
+                    location.reload()
+                  }, 500)
                 })
                 .catch(err => {
                   if (err && err.msg && err.msg.includes('customer is black, cannot update edd')) {
                     this.$message({
                       type: 'error',
+                      message: '用戶是黑名單，無法更新 EDD 限額'
+                    })
+                  }
+                  if (err && err.msg && err.msg.includes('no edd limit or days update')) {
+                    this.$message({
+                      type: 'error',
+                      message: 'EDD 限額數量跟舊的一致'
+                    })
+                  }
+
+                  if (err && err.msg && err.msg.includes('customer is black, cannot update limit')) {
+                    this.$message({
+                      type: 'error',
                       message: '用戶是黑名單，無法更新交易限額'
                     })
                   }
-                  if (err && err.msg && err.msg.includes('no edd limit update')) {
+                  if (err && err.msg && err.msg.includes('no limit update')) {
                     this.$message({
                       type: 'error',
                       message: '交易限額數量跟舊的一致'
@@ -369,11 +389,17 @@ export default {
         this.form1.role = response.data.role_id
         this.user_role = response.data.role_id
         this.form2.daily_limit = parseInt(response.data.daily_limit)
+        this.origin_daily_limit = parseInt(response.data.daily_limit)
         this.form2.monthly_limit = parseInt(response.data.monthly_limit)
+        this.origin_monthly_limit = parseInt(response.data.monthly_limit)
         this.form3.level1 = parseInt(response.data.level1)
+        this.origin_level1 = parseInt(response.data.level1)
         this.form3.level2 = parseInt(response.data.level2)
+        this.origin_level2 = parseInt(response.data.level2)
         this.form3.level1_days = parseInt(response.data.level1_days)
+        this.origin_level1_days = parseInt(response.data.level1_days)
         this.form3.level2_days = parseInt(response.data.level2_days)
+        this.origin_level2_days = parseInt(response.data.level2_days)
         this.type = this.roleId2String(response.data.role_id)
 
         switch (this.type) {

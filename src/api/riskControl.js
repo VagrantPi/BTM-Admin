@@ -47,32 +47,16 @@ export function resetRiskControlRoleBatch(customer_ids, token) {
   })
 }
 
-export function updateRiskControlLimit(customer_id, form, token) {
+export function updateRiskControlLimit(customer_id, form1, form2, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/risk_control/' + customer_id + '/limit',
     method: 'patch',
     headers: { token },
     data: {
-      daily_limit: form.daily_limit,
-      monthly_limit: form.monthly_limit,
-      reason: form.limit_reason
-    }
-  }).catch(err => {
-    const { response } = err
-    if (response) {
-      return Promise.reject(response.data)
-    }
-    return Promise.reject(err)
-  })
-}
-
-export function updateRiskControlEdd(customer_id, form, token) {
-  return request({
-    url: process.env.VUE_APP_BACKEND_URL + '/api/risk_control/' + customer_id + '/edd',
-    method: 'patch',
-    headers: { token },
-    data: {
-      ...form
+      daily_limit: form1.daily_limit,
+      monthly_limit: form1.monthly_limit,
+      reason: form1.limit_reason,
+      ...form2
     }
   }).catch(err => {
     const { response } = err

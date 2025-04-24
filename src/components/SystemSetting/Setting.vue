@@ -8,7 +8,7 @@
 </style>
 
 <template>
-  <div class="app-container">
+  <div v-loading.fullscreen.lock="fullscreenLoading" class="app-container" element-loading-background="rgba(0, 0, 0, 0.3)">
     <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
       <el-tab-pane label="公開固定限額" name="first">
         <el-form ref="form1" :inline="true" :rules="rules1" :model="form1" label-position="left" style="margin:30px;">
@@ -132,6 +132,7 @@ export default {
   },
   data() {
     return {
+      fullscreenLoading: false,
       rules1: {
         daily_limit: [
           { required: true, message: '不能為空' },
@@ -234,12 +235,12 @@ export default {
         const valid4 = await this.$refs.form4.validate()
         const valid5 = await this.$refs.form5.validate()
         if (valid1 && valid2 && valid3 && valid4 && valid5) {
-          this.$alert('<b>注意!!</b><br/><b>變更初始設定會造成所有客製化限額改回預設限額</b><br/>確定要更新設定嗎?', '更新設定', {
+          this.$alert('確定要更新設定嗎?', '更新設定', {
             type: 'warning',
             confirmButtonText: '确定',
-            dangerouslyUseHTMLString: true,
             callback: action => {
               if (action === 'confirm') {
+                this.fullscreenLoading = true
                 updateConfigLimit(this.$store.getters.token, {
                   role: this.customerType,
                   ...this.form1,
@@ -254,7 +255,10 @@ export default {
                       message: '更新成功'
                     })
 
-                    location.reload()
+                    setTimeout(() => {
+                      this.fullscreenLoading = false
+                      location.reload()
+                    }, 500)
                   })
                   .catch(err => {
                     if (err && err.msg && err.msg.includes('no limit change')) {
