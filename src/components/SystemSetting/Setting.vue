@@ -83,7 +83,7 @@
     <br>
 
     <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
-      <el-tab-pane label="變更是由" name="first">
+      <el-tab-pane label="變更事由" name="first">
         <el-form ref="form5" :inline="true" :rules="rules5" :model="form5" label-position="left" style="margin:30px;">
           <el-form-item label="目前角色權限" prop="reason">
             <el-select v-model="form5.reason" placeholder="目前角色權限">

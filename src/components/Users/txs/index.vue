@@ -85,7 +85,7 @@
       </el-table-column>
       <el-table-column label="Cash" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.fiat }} {{ row.fiatCode }}</span>
+          <span>{{ formatNumber(row.fiat) }} {{ row.fiatCode }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Crypto" align="center">
@@ -95,7 +95,7 @@
       </el-table-column>
       <el-table-column label="Rate" align="center">
         <template slot-scope="{row}">
-          <span>1 {{ row.cryptoCode }} = {{ Number.parseFloat((Number(row.fiat) - Number(row.cashInFee)) / caculateCrypto(row.cryptoAtoms, row.cryptoCode)).toFixed(2) }} {{ row.fiatCode }}</span>
+          <span>1 {{ row.cryptoCode }} = {{ formatNumber(Number.parseFloat((Number(row.fiat) - Number(row.cashInFee)) / caculateCrypto(row.cryptoAtoms, row.cryptoCode)).toFixed(2)) }} {{ row.fiatCode }}</span>
         </template>
       </el-table-column>
       <el-table-column v-if="isDetail" label="發票" align="center">
@@ -218,6 +218,9 @@ export default {
     utc8Time(t) {
       const utcDate = new Date(t)
       return utcDate.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+    },
+    formatNumber(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
   }
 }

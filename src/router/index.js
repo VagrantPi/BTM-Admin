@@ -349,6 +349,17 @@ export const asyncRoutes = [
           icon: 'el-icon-edit-outline',
           roles: ['admin']
         }
+      },
+      {
+        id: 'systemSettingHistory',
+        path: 'history',
+        component: () => import('@/views/setting/history'),
+        name: '設定紀錄',
+        meta: {
+          title: '設定紀錄',
+          icon: 'el-icon-document-copy',
+          roles: ['admin']
+        }
       }
     ]
   },

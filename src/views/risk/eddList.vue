@@ -117,6 +117,7 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
+      :page-sizes="[10]"
       @pagination="getList"
     />
   </div>
