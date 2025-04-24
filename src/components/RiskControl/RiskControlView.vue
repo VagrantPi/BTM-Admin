@@ -97,7 +97,7 @@
             <el-input v-model.number="form3.level2_days" :disabled="!isLimitEditable" />
           </el-form-item>
           <br>
-          <el-button type="warning" :disabled="!isLimitEditable" @click="updateEdd()">
+          <el-button type="warning" :disabled="!isLimitEditable" @click="updateLimitSetting()">
             Update
           </el-button>
         </el-form>
@@ -318,7 +318,7 @@ export default {
         }
       })
     },
-    updateEdd() {
+    async updateLimitSetting() {
       if (this.origin_daily_limit === this.form2.daily_limit && this.origin_monthly_limit === this.form2.monthly_limit) {
         this.$message({
           message: '更新 EDD 時限額也需要修改',
@@ -335,14 +335,31 @@ export default {
         })
         return
       }
-      this.$refs.form3.validate(valid => {
-        if (valid) {
-          this.$alert('確定要更新交易限額與 EDD 限額嗎?', '更新交易限額與 EDD 限額', {
-            type: 'warning',
-            confirmButtonText: '确定',
-            callback: action => {
+
+      let valid1 = false
+      let valid2 = false
+      try {
+        valid1 = await this.$refs.form2.validate()
+      } catch (e) {
+        valid1 = false
+      }
+      if (!valid1) {
+        this.activeName2 = 'limit'
+        return
+      }
+      try {
+        valid2 = await this.$refs.form3.validate()
+      } catch (e) {
+        valid2 = false
+      }
+      if (valid2) {
+        this.$alert('確定要更新交易限額與 EDD 限額嗎?', '更新交易限額與 EDD 限額', {
+          type: 'warning',
+          confirmButtonText: '确定',
+          callback: action => {
+            if (action === 'confirm') {
               updateRiskControlLimit(this.customerId, this.form2, this.form3, this.$store.getters.token)
-                .then(response => {
+                .then(() => {
                   this.$message({
                     type: 'success',
                     message: '更新成功'
@@ -380,9 +397,9 @@ export default {
                   }
                 })
             }
-          })
-        }
-      })
+          }
+        })
+      }
     },
     fetchRole() {
       fetchRiskControlRole(this.customerId, this.$store.getters.token).then(response => {
