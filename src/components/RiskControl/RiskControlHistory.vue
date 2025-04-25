@@ -36,7 +36,10 @@
                   'EDD 修改' :
                   row.before_value.role !== row.after_value.role ?
                     '角色修改' :
-                    '限額修改'
+                    row.before_value.velocity_days !== row.after_value.velocity_days ||
+                    row.before_value.velocity_times !== row.after_value.velocity_times ?
+                      '交易次數限制修改' :
+                      '限額修改'
               }}</span>
             </template>
           </el-table-column>

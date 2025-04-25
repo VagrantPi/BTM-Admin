@@ -52,6 +52,38 @@
     <br>
 
     <el-tabs v-if="type !== 'black'" v-model="activeName2" type="border-card" class="demo-tabs">
+      <el-tab-pane label="交易次數限制" name="limit">
+        <el-form ref="form4" :inline="true" :rules="rules4" :model="form4" label-position="left" style="margin:30px;">
+          <el-form-item label="天數" prop="velocity_days" :min="0">
+            <el-input v-model.number="form4.velocity_days" :disabled="!isLimitEditable" />
+          </el-form-item>
+          <el-form-item label="次數" prop="velocity_times" :min="0">
+            <el-input v-model.number="form4.velocity_times" :disabled="!isLimitEditable" />
+          </el-form-item>
+          <el-form-item label="限額變更原因" prop="reason" style="margin-left: 50px;">
+            <el-select v-model="form4.reason" placeholder="限額變更原因">
+              <el-option
+                v-for="item in velocity_reasons"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+              />
+            </el-select>
+          </el-form-item>
+          <br>
+          <el-button type="warning" :disabled="!isLimitEditable" @click="updateVelocity()">
+            Update
+          </el-button>
+        </el-form>
+      </el-tab-pane>
+    </el-tabs>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <el-tabs v-if="type !== 'black'" v-model="activeName2" type="border-card" class="demo-tabs">
       <el-tab-pane label="限額" name="limit">
         <el-alert title="限額與 EDD 需要同時修改" type="info" show-icon />
         <el-form ref="form2" :inline="true" :rules="rules2" :model="form2" label-position="left" style="margin:30px;">
@@ -128,7 +160,7 @@
 import waves from '@/directive/waves' // waves directive
 import NoteTable from '@/components/Users/note/index.vue'
 
-import { fetchRiskControlRoleList, fetchRiskControlRole, updateRiskControlRole, resetRiskControlRole, updateRiskControlLimit } from '@/api/riskControl'
+import { fetchRiskControlRoleList, fetchRiskControlRole, updateRiskControlRole, resetRiskControlRole, updateRiskControlLimit, updateRiskControlVelocity } from '@/api/riskControl'
 
 export default {
   name: 'RiskControlView',
@@ -198,6 +230,19 @@ export default {
           { type: 'number', message: '天數必須為數字', trigger: 'blur' }
         ]
       },
+      rules4: {
+        velocity_days: [
+          { required: true, message: '不能為空' },
+          { type: 'number', message: '天數必須為數字', trigger: 'blur' }
+        ],
+        velocity_times: [
+          { required: true, message: '不能為空' },
+          { type: 'number', message: '次數必須為數字', trigger: 'blur' }
+        ],
+        reason: [
+          { required: true, message: '不能為空' }
+        ]
+      },
       form1: {
         role: 0,
         reason: ''
@@ -215,6 +260,11 @@ export default {
         level1_days: 0,
         level2_days: 0
       },
+      form4: {
+        velocity_times: 0,
+        velocity_days: 0,
+        reason: ''
+      },
       origin_level1: 0,
       origin_level2: 0,
       origin_level1_days: 0,
@@ -229,7 +279,11 @@ export default {
         { name: '加強監控' },
         { name: '其他特殊狀況' }
       ],
-      reason: ''
+      reason: '',
+      velocity_reasons: [
+        { name: '加強監控' },
+        { name: '其他特殊狀況' }
+      ]
     }
   },
   computed: {
@@ -262,6 +316,36 @@ export default {
           } else {
             this.activeName2 = 'edd'
           }
+        }
+      })
+    },
+    updateVelocity() {
+      this.$refs.form4.validate(valid => {
+        if (valid) {
+          updateRiskControlVelocity(this.customerId, this.form4, this.$store.getters.token)
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '更新成功'
+              })
+              setTimeout(() => {
+                location.reload()
+              }, 500)
+            })
+            .catch(err => {
+              if (err && err.msg && err.msg.includes('customer is black, cannot update')) {
+                this.$message({
+                  type: 'error',
+                  message: '用戶是黑名單，無法更新'
+                })
+              }
+              if (err && err.msg && err.msg.includes('no velocity update')) {
+                this.$message({
+                  type: 'error',
+                  message: '數量跟舊的一致'
+                })
+              }
+            })
         }
       })
     },
@@ -418,6 +502,8 @@ export default {
         this.form3.level2_days = parseInt(response.data.level2_days)
         this.origin_level2_days = parseInt(response.data.level2_days)
         this.type = this.roleId2String(response.data.role_id)
+        this.form4.velocity_days = parseInt(response.data.velocity_days)
+        this.form4.velocity_times = parseInt(response.data.velocity_times)
 
         switch (this.type) {
           case 'white':

@@ -28,6 +28,25 @@ export function updateRiskControlRole(customer_id, form, token) {
   })
 }
 
+export function updateRiskControlVelocity(customer_id, form, token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/risk_control/' + customer_id + '/velocity',
+    method: 'patch',
+    headers: { token },
+    data: {
+      velocity_days: form.velocity_days,
+      velocity_times: form.velocity_times,
+      reason: form.reason
+    }
+  }).catch(err => {
+    const { response } = err
+    if (response) {
+      return Promise.reject(response.data)
+    }
+    return Promise.reject(err)
+  })
+}
+
 export function resetRiskControlRole(customer_id, token) {
   return request({
     url: process.env.VUE_APP_BACKEND_URL + '/api/risk_control/' + customer_id + '/role/reset',

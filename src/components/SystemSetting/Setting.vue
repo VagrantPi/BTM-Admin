@@ -31,11 +31,11 @@
     <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
       <el-tab-pane label="交易次數限制" name="first">
         <el-form ref="form2" :inline="true" :rules="rules2" :model="form2" label-position="left" style="margin:30px;">
-          <el-form-item label="天數" prop="limit_days" :min="0">
-            <el-input v-model.number="form2.limit_days" />
+          <el-form-item label="天數" prop="velocity_days" :min="0">
+            <el-input v-model.number="form2.velocity_days" />
           </el-form-item>
-          <el-form-item label="次數" prop="limit_times" :min="0">
-            <el-input v-model.number="form2.limit_times" />
+          <el-form-item label="次數" prop="velocity_times" :min="0">
+            <el-input v-model.number="form2.velocity_times" />
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -146,12 +146,12 @@ export default {
         ]
       },
       rules2: {
-        limit_days: [
+        velocity_days: [
           { required: true, message: '不能為空' },
           { type: 'number', message: '天數必須為數字', trigger: 'blur' },
           { type: 'number', message: '數字需大於 0', min: 1 }
         ],
-        limit_times: [
+        velocity_times: [
           { required: true, message: '不能為空' },
           { type: 'number', message: '次數必須為數字', trigger: 'blur' },
           { type: 'number', message: '數字需大於 0', min: 1 }
@@ -191,8 +191,8 @@ export default {
         monthly_limit: 0
       },
       form2: {
-        limit_days: 0,
-        limit_times: 0
+        velocity_days: 0,
+        velocity_times: 0
       },
       form3: {
         level1_volumn: 0,
@@ -219,8 +219,8 @@ export default {
   created() {
     this.form1.daily_limit = Number(this.limitConfig.daily_limit)
     this.form1.monthly_limit = Number(this.limitConfig.monthly_limit)
-    // this.form2.limit_days = Number(this.limitConfig.limit_days)
-    // this.form2.limit_times = Number(this.limitConfig.limit_times)
+    this.form2.velocity_days = Number(this.limitConfig.velocity_days)
+    this.form2.velocity_times = Number(this.limitConfig.velocity_times)
     this.form3.level1_volumn = Number(this.limitConfig.level1)
     this.form3.level1_days = Number(this.limitConfig.level1_days)
     this.form4.level2_volumn = Number(this.limitConfig.level2)
@@ -267,6 +267,8 @@ export default {
                         message: '未有限額變更'
                       })
                     }
+
+                    this.fullscreenLoading = false
                   })
               }
             }
