@@ -9,7 +9,7 @@
 
 <template>
   <div class="app-container">
-    <h1>Customer {{ phone }}</h1>
+    <h1>設定紀錄</h1>
 
     <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
       <el-tab-pane label="修改紀錄" name="log">
@@ -30,35 +30,35 @@
           </el-table-column>
           <el-table-column label="公開固定限額" prop="reason" align="center">
             <template slot-scope="{row}">
-              <span>日限額：{{ row.after_value.DailyLimit }}</span>
+              <span>日限額：{{ row.after_value.daily_limit }}</span>
               <br>
-              <span>月限額：{{ row.after_value.MonthlyLimit }}</span>
+              <span>月限額：{{ row.after_value.monthly_limit }}</span>
             </template>
           </el-table-column>
-          <!-- <el-table-column label="交易次數限制" prop="reason" align="center">
+          <el-table-column label="交易次數限制" prop="reason" align="center">
             <template slot-scope="{row}">
-              <span>天數：{{ 0 }}</span>
+              <span>天數：{{ row.after_value.velocity_days }}</span>
               <br>
-              <span>次數：{{ 0 }}</span>
+              <span>次數：{{ row.after_value.velocity_times }}</span>
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column label="EDD: Level 1" prop="reason" align="center">
             <template slot-scope="{row}">
-              <span>交易限額：{{ row.after_value.Level1 }}</span>
+              <span>交易限額：{{ row.after_value.level1 }}</span>
               <br>
-              <span>累積天數：{{ row.after_value.Level1Days }}</span>
+              <span>累積天數：{{ row.after_value.level1_days }}</span>
             </template>
           </el-table-column>
           <el-table-column label="EDD: Level 2" prop="reason" align="center">
             <template slot-scope="{row}">
-              <span>交易限額：{{ row.after_value.Level2 }}</span>
+              <span>交易限額：{{ row.after_value.level2 }}</span>
               <br>
-              <span>累積天數：{{ row.after_value.Level2Days }}</span>
+              <span>累積天數：{{ row.after_value.level2_days }}</span>
             </template>
           </el-table-column>
           <el-table-column label="變更事由" prop="reason" align="center">
             <template slot-scope="{row}">
-              <span>{{ row.after_value.ChangeReason }}</span>
+              <span>{{ row.after_value.change_reason }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作人員" prop="operation_user_id" align="center">
