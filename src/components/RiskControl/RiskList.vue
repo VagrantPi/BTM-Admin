@@ -153,7 +153,8 @@ export default {
         query: '',
         name: '',
         phone: '',
-        customer_type: this.customerType
+        customer_type: this.customerType,
+        active: true
       }
     }
   },

@@ -51,8 +51,11 @@
     <br>
     <br>
 
-    <el-tabs v-if="type !== 'black'" v-model="activeName2" type="border-card" class="demo-tabs">
+    <el-tabs v-model="activeName2" type="border-card" class="demo-tabs">
       <el-tab-pane label="交易次數限制" name="limit">
+        <div v-if="type == 'black'">
+          <el-alert title="黑名單無法修改交易次數限制" type="info" show-icon />
+        </div>
         <el-form ref="form4" :inline="true" :rules="rules4" :model="form4" label-position="left" style="margin:30px;">
           <el-form-item label="天數" prop="velocity_days" :min="0">
             <el-input v-model.number="form4.velocity_days" :disabled="!isLimitEditable" />
@@ -83,9 +86,14 @@
     <br>
     <br>
 
-    <el-tabs v-if="type !== 'black'" v-model="activeName2" type="border-card" class="demo-tabs">
+    <el-tabs v-model="activeName2" type="border-card" class="demo-tabs">
       <el-tab-pane label="限額" name="limit">
-        <el-alert title="限額與 EDD 需要同時修改" type="info" show-icon />
+        <div v-if="type !== 'black'">
+          <el-alert title="限額與 EDD 需要同時修改" type="info" show-icon />
+        </div>
+        <div v-else>
+          <el-alert title="黑名單無法修改限額及 EDD 參數" type="info" show-icon />
+        </div>
         <el-form ref="form2" :inline="true" :rules="rules2" :model="form2" label-position="left" style="margin:30px;">
           <el-form-item label="日限額" prop="daily_limit" :min="0">
             <el-input v-model.number="form2.daily_limit" :disabled="!isLimitEditable" />
@@ -113,7 +121,12 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="EDD參數" name="edd">
-        <el-alert title="限額與 EDD 需要同時修改" type="info" show-icon />
+        <div v-if="type !== 'black'">
+          <el-alert title="限額與 EDD 需要同時修改" type="info" show-icon />
+        </div>
+        <div v-else>
+          <el-alert title="黑名單無法修改限額及 EDD 參數" type="info" show-icon />
+        </div>
         <el-form ref="form3" :inline="true" :rules="rules3" :model="form3" label-position="left" style="margin:30px;">
           <el-form-item label="Level1 交易限額" prop="level1" :min="0">
             <el-input v-model.number="form3.level1" :disabled="!isLimitEditable" />
@@ -136,12 +149,10 @@
       </el-tab-pane>
     </el-tabs>
 
-    <div v-if="type !== 'black'">
-      <br>
-      <br>
-      <br>
-      <br>
-    </div>
+    <br>
+    <br>
+    <br>
+    <br>
 
     <el-tabs v-model="activeName3" type="border-card" class="demo-tabs">
       <el-tab-pane label="風險備註" name="log">

@@ -136,14 +136,14 @@ export const asyncRoutes = [
         path: 'user',
         component: () => import('@/views/permission/user'),
         name: '後台用戶管理',
-        meta: { title: '後台用戶管理', icon: 'user', roles: ['admin'] }
+        meta: { title: '後台用戶管理', icon: 'el-icon-s-custom', roles: ['admin'] }
       },
       {
         id: 'permission',
         path: 'index',
         component: () => import('@/views/permission/role'),
         name: '權限管理',
-        meta: { title: '權限管理', icon: 'lock', roles: ['admin'] }
+        meta: { title: '權限管理', icon: 'el-icon-s-check', roles: ['admin'] }
       }
     ]
   },
@@ -232,7 +232,7 @@ export const asyncRoutes = [
         name: '告誡名單',
         meta: {
           title: '告誡名單',
-          icon: 'el-icon-warning',
+          icon: 'el-icon-s-flag',
           roles: ['admin'],
           noCache: true
         }
@@ -359,6 +359,59 @@ export const asyncRoutes = [
           title: '設定紀錄',
           icon: 'el-icon-document-copy',
           roles: ['admin']
+        }
+      }
+    ]
+  },
+
+  {
+    id: 'rdBar',
+    path: '/rd',
+    component: Layout,
+    redirect: '/rd/server_logs', // TODO: 先指向告誡名單，之後改成審核紀錄
+    alwaysShow: true, // will always show the root menu
+    name: '系統維護',
+    meta: {
+      title: '系統維護',
+      icon: 'el-icon-coffee-cup',
+      roles: ['admin']
+    },
+
+    children: [
+      {
+        id: 'lamassuLogs',
+        path: 'lamassu_logs',
+        component: () => import('@/views/system/lamassuLog'),
+        name: 'Lamassu日誌',
+        meta: {
+          title: 'Lamassu日誌',
+          icon: 'el-icon-timer',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
+      {
+        id: 'serverLogs',
+        path: 'server_logs',
+        component: () => import('@/views/system/serverLog'),
+        name: '伺服器日誌',
+        meta: {
+          title: '伺服器日誌',
+          icon: 'el-icon-timer',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
+      {
+        id: 'mockLimitLogs',
+        path: 'mock_limit_logs',
+        component: () => import('@/views/system/mockLimitLogs'),
+        name: '限額塞入假交易紀錄',
+        meta: {
+          title: '限額塞入假交易紀錄',
+          icon: 'el-icon-discover',
+          roles: ['admin'],
+          noCache: true
         }
       }
     ]
