@@ -365,10 +365,10 @@ export const asyncRoutes = [
   },
 
   {
-    id: 'rdBar',
-    path: '/rd',
+    id: 'systemBar',
+    path: '/system',
     component: Layout,
-    redirect: '/rd/server_logs', // TODO: 先指向告誡名單，之後改成審核紀錄
+    redirect: '/system/lamassu_logs', // TODO: 先指向告誡名單，之後改成審核紀錄
     alwaysShow: true, // will always show the root menu
     name: '系統維護',
     meta: {

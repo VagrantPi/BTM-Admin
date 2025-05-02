@@ -36,8 +36,8 @@
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
-      border
       fit
+      stripe
       highlight-current-row
       style="width: 100%;"
     >

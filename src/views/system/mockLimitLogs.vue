@@ -2,7 +2,12 @@
 
   <div class="app-container">
     <h1>限額塞入假交易紀錄</h1>
-
+    <el-input
+      v-model="listQuery.customer_id"
+      placeholder="Customer ID"
+      style="width: 200px;"
+      class="filter-item"
+    />
     <el-date-picker
       v-model="listQuery.date_range"
       type="datetimerange"
@@ -41,14 +46,9 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="date" prop="ID" align="center">
+      <el-table-column label="date" prop="ID" align="center" width="160">
         <template slot-scope="{row}">
           <span>{{ utc8Time(row.created_at) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="交易撈取起始時間" prop="start_at" align="center">
-        <template slot-scope="{row}">
-          <span>{{ utc8Time(row.start_at) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="customer_id" prop="customer_id" align="center">
@@ -56,37 +56,24 @@
           <span>{{ row.customer_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="預設日限額" prop="default_daily_limit" align="center">
+      <el-table-column label="role" prop="role" align="center" width="100">
         <template slot-scope="{row}">
-          <span>{{ formatNumber(row.default_daily_limit) }}</span>
+          <span>{{ role2String(row.role) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="預設月限額" prop="default_monthly_limit" align="center">
+      <el-table-column label="預設 - 客制 = 塞入" prop="default_daily_limit" align="center">
         <template slot-scope="{row}">
-          <span>{{ formatNumber(row.default_monthly_limit) }}</span>
+          <span>日限額：{{ formatNumber(row.default_daily_limit) }} - {{ formatNumber(row.limit_daily_limit) }} = {{ formatNumber(row.day_limit) }}</span>
+          <br>
+          <span>月限額：{{ formatNumber(row.default_monthly_limit) }} - {{ formatNumber(row.limit_monthly_limit) }} = {{ formatNumber(row.month_limit) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="客制日限額" prop="limit_daily_limit" align="center">
+      <el-table-column label="交易撈取起始時間" prop="start_at" align="center" width="160">
         <template slot-scope="{row}">
-          <span>{{ formatNumber(row.limit_daily_limit) }}</span>
+          <span>{{ utc8Time(row.start_at) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="客制月限額" prop="limit_monthly_limit" align="center">
-        <template slot-scope="{row}">
-          <span>{{ formatNumber(row.limit_monthly_limit) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="塞入日限額假交易" prop="day_limit" align="center">
-        <template slot-scope="{row}">
-          <span>{{ formatNumber(row.day_limit) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="客制月限額假交易" prop="month_limit" align="center">
-        <template slot-scope="{row}">
-          <span>{{ formatNumber(row.month_limit) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="suspend 時間" prop="ban_expire_date" align="center">
+      <el-table-column label="suspend 時間" prop="ban_expire_date" align="center" width="160">
         <template slot-scope="{row}">
           <span>{{ row.ban_expire_date ? utc8Time(row.ban_expire_date) : '' }}</span>
         </template>
@@ -122,6 +109,7 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
+        customer_id: '',
         page: 1,
         limit: 20,
         date_range: ''
@@ -169,6 +157,18 @@ export default {
     },
     formatNumber(num) {
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    },
+    role2String(role) {
+      switch (role) {
+        case 1:
+          return '白名單'
+        case 2:
+          return '灰名單'
+        case 3:
+          return '黑名單'
+        default:
+          return ''
+      }
     }
   }
 }
