@@ -11,6 +11,11 @@
   <div class="app-container">
     <h1>{{ title }} {{ phone }}</h1>
 
+    <!-- <div v-if="type === 'black'">
+      <span>黑名單原因：{{  }}</span>
+    </div>
+    <br> -->
+
     <el-tabs v-model="activeName1" type="border-card" class="demo-tabs">
       <el-tab-pane label="角色變更" name="role">
         <el-form ref="form1" :inline="true" :rules="rules1" :model="form1" label-position="left" style="margin:30px;">
@@ -276,6 +281,7 @@ export default {
         velocity_days: 0,
         reason: ''
       },
+      black_reason: '',
       origin_level1: 0,
       origin_level2: 0,
       origin_level1_days: 0,
@@ -515,6 +521,7 @@ export default {
         this.type = this.roleId2String(response.data.role_id)
         this.form4.velocity_days = parseInt(response.data.velocity_days)
         this.form4.velocity_times = parseInt(response.data.velocity_times)
+        this.black_reason = response.data.change_role_reason
 
         switch (this.type) {
           case 'white':

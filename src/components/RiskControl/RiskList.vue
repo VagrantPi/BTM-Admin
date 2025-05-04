@@ -83,7 +83,7 @@
           <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="showReason" label="reason" align="center">
+      <el-table-column v-if="showReason" label="reason（目前有 BUG，原因可能不是正確的）" align="center">
         <template slot-scope="{row}">
           <span>{{ row.is_cib_block ? "告誡名單" : row.edd_type ? eddTypeReason(row.edd_type) : row.change_role_reason }}</span>
         </template>
