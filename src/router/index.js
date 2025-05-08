@@ -413,6 +413,30 @@ export const asyncRoutes = [
           roles: ['admin'],
           noCache: true
         }
+      },
+      {
+        id: 'tools',
+        path: 'tools',
+        component: () => import('@/views/system/tools'),
+        name: 'RD工具',
+        meta: {
+          title: 'RD工具',
+          icon: 'el-icon-goblet-square-full',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
+      {
+        id: 'smsTools',
+        path: 'sms_tools',
+        component: () => import('@/views/system/smsTools'),
+        name: 'SMS工具',
+        meta: {
+          title: 'SMS工具',
+          icon: 'el-icon-chat-line-square',
+          roles: ['admin'],
+          noCache: true
+        }
       }
     ]
   },

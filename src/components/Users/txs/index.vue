@@ -55,6 +55,9 @@
       <el-table-column v-if="!isDetail" type="expand">
         <template #default="props">
           <div m="4">
+            <p m="t-0 b-2">Session ID: {{ props.row.id }}</p>
+          </div>
+          <div m="4">
             <p m="t-0 b-2">Customer: {{ props.row.phone }}</p>
           </div>
           <div m="4">
@@ -95,7 +98,7 @@
       </el-table-column>
       <el-table-column label="Rate" align="center">
         <template slot-scope="{row}">
-          <span>1 {{ row.cryptoCode }} = {{ formatNumber(Number.parseFloat((Number(row.fiat) - Number(row.cashInFee)) / caculateCrypto(row.cryptoAtoms, row.cryptoCode)).toFixed(2)) }} {{ row.fiatCode }}</span>
+          <span>1 {{ row.cryptoCode }} = {{ formatNumber((parseFloat(row.rawTickerPrice) + (parseFloat(row.rawTickerPrice) * parseFloat(row.commissionPercentage))).toFixed(2)) }} {{ row.fiatCode }}</span>
         </template>
       </el-table-column>
       <el-table-column v-if="isDetail" label="發票" align="center">
