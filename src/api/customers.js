@@ -100,6 +100,25 @@ export function getCustomerNotes(query, customer_id, token) {
   })
 }
 
+export function updateCustomerNote(customer_id, note_id, noteData, token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/' + customer_id + '/note/' + note_id,
+    method: 'patch',
+    data: {
+      note: noteData
+    },
+    headers: { token }
+  })
+}
+
+export function deleteCustomerNote(customer_id, note_id, token) {
+  return request({
+    url: process.env.VUE_APP_BACKEND_URL + '/api/customer/' + customer_id + '/note/' + note_id,
+    method: 'delete',
+    headers: { token }
+  })
+}
+
 export function fetchEddList(query, token) {
   const newQuery = { ...query }
   if (newQuery.edd_date_range) {

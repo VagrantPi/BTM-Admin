@@ -57,7 +57,7 @@
     <br>
 
     <el-tabs v-model="activeName2" type="border-card" class="demo-tabs">
-      <el-tab-pane label="交易次數限制" name="limit">
+      <el-tab-pane label="交易次數限制" name="limit1">
         <div v-if="type == 'black'">
           <el-alert title="黑名單無法修改交易次數限制" type="info" show-icon />
         </div>
@@ -91,8 +91,8 @@
     <br>
     <br>
 
-    <el-tabs v-model="activeName2" type="border-card" class="demo-tabs">
-      <el-tab-pane label="限額" name="limit">
+    <el-tabs v-model="activeName3" type="border-card" class="demo-tabs">
+      <el-tab-pane label="限額" name="limit2">
         <div v-if="type !== 'black'">
           <el-alert title="限額與 EDD 需要同時修改" type="info" show-icon />
         </div>
@@ -159,7 +159,7 @@
     <br>
     <br>
 
-    <el-tabs v-model="activeName3" type="border-card" class="demo-tabs">
+    <el-tabs v-model="activeName4" type="border-card" class="demo-tabs">
       <el-tab-pane label="風險備註" name="log">
         <NoteTable
           v-if="customerId && phone"
@@ -287,8 +287,9 @@ export default {
       origin_level1_days: 0,
       origin_level2_days: 0,
       activeName1: 'role',
-      activeName2: 'limit',
-      activeName3: 'log',
+      activeName2: 'limit1',
+      activeName3: 'limit2',
+      activeName4: 'log',
       user_role: 0,
       reasons: [],
       limit_reasons: [
