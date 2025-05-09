@@ -177,15 +177,11 @@ export default {
       })
     },
     handleClearFilter() {
-      this.listQuery = {
-        page: 1,
-        limit: 10,
-        query: '',
-        name: '',
-        phone: '',
-        customer_type: this.customerType
-      }
-
+      this.listQuery.query = ''
+      this.listQuery.name = ''
+      this.listQuery.phone = ''
+      this.listQuery.page = 1
+      this.listQuery.limit = 10
       this.getList()
       setTimeout(() => {
         this.listLoading = false
